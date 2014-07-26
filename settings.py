@@ -10,7 +10,7 @@ AUTHOR = 'jacksu'
 
 DISQUS_SITENAME = 'jackblog'
 GITHUB_URL = 'https://github.com/jacksu'
-#~ SITEURL = 'http://jacksu.github.com'
+SITEURL = 'http://jacksu.github.io'
 GOOGLE_ANALYTICS = 'UA-30756331-1'
 TAG_FEED_ATOM  = 'feeds/%s.atom.xml'
 TAG_CLOUD_STEPS = 4
@@ -28,11 +28,11 @@ PATH = 'posts'
 #~ REVERSE_ARCHIVE_ORDER=0
 
 LINKS = (('dofine', 'http://log.dofine.me/'),
-		('博客园',"http://www.cnblogs.com/jacksu-tencent/")
+		('cnblog',"http://www.cnblogs.com/jacksu-tencent/")
 		)
 
 SOCIAL = (
-		('github', 'https://github.com/jacksu')
+		('github', 'https://github.com/jacksu'),
 		)
 
 #GOOGLE_CUSTOM_SEARCH_SIDEBAR = "010017366155264590731:njcqykcxuly"#终于被google收录了!~          
@@ -52,7 +52,7 @@ document.write("<p style='text-align: center'><strong><font style='color:black;f
 <a href="http://www.ubuntu.com/"><img src="http://www.ubuntu.com/countdown/banner1.png" border="0" width="180" height="150" alt="The next version of Ubuntu is coming soon"></a><br/>
 
 <br>
-<a href="http://read.douban.com/ebook/4460022/?referral_code=9ztqcla6"><img border="0" alt="大教堂与集市" src="http://img3.douban.com/view/ark_article_cover/retina/public/4460022.jpg?v=1403842265.0/"/></a><br>
+<a href="http://read.douban.com/ebook/4460022/?referral_code=9ztqcla6"><img border="0" alt="大集市与教堂" src="http://img3.douban.com/view/ark_article_cover/retina/public/4460022.jpg?v=1403842265.0/"/></a><br>
 
 <br>
 <li class="widget-container widget_text">
