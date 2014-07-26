@@ -1,14 +1,13 @@
-Title: My super title
-Date: 2010-12-03 10:20
-Modified: 2010-12-05 19:30
-Category: Python
-Tags: pelican, publishing
+Title: 设置github pages
+Date: 2014-7-27 00:20
+Modified: 2014-7-27 00:20
+Category: env_set
+Tags: github
 Slug: my-super-post
-Author: Alexis Metaireau
+Author: jacksu
 Summary: Short version for index and feeds
 
-#设置githup pages
-##软件安装
+#软件安装
 
 sudo easy_install pipe<br>
 sudo pip install pelican

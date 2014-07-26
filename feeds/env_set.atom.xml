@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="http://jacksu.github.io/" rel="alternate"></link><link href="http://jacksu.github.io/feeds/env_set.atom.xml" rel="self"></link><id>http://jacksu.github.io/</id><updated>2014-07-27T00:20:00+02:00</updated><entry><title>设置github pages</title><link href="http://jacksu.github.io/my-super-post.html" rel="alternate"></link><updated>2014-07-27T00:20:00+02:00</updated><author><name>jacksu</name></author><id>tag:jacksu.github.io,2014-07-27:my-super-post.html</id><summary type="html">&lt;h1&gt;软件安装&lt;/h1&gt;
+&lt;p&gt;sudo easy_install pipe&lt;br&gt;
+sudo pip install pelican&lt;/p&gt;</summary><category term="github"></category></entry></feed>
