@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-TIMEZONE = 'Europe/Paris'
+TIMEZONE = 'Asia/Shanghai'
 
 DEFAULT_LANG = 'zhs'
 
@@ -10,7 +10,7 @@ AUTHOR = 'jacksu'
 
 DISQUS_SITENAME = 'jackblog'
 GITHUB_URL = 'https://github.com/jacksu'
-SITEURL = 'http://jacksu.github.io'
+SITEURL = '<http://jacksu.github.com>'
 GOOGLE_ANALYTICS = 'UA-30756331-1'
 TAG_FEED_ATOM  = 'feeds/%s.atom.xml'
 TAG_CLOUD_STEPS = 4
