@@ -24,7 +24,10 @@ pelican不可以识别markdown，需要下载markdown包，markdown的下载方�
 `sudo pip install Markdown`
 ##主题
 没有主题，你的网站太难看了，那么下载一个主题：
+
 `git clone https://github.com/farseerfc/pelican-themes`
+
+---
 #设置
 ##github上的设置
 在github上建立**`username.github.io`**的项目（如何在github建立项目，我就不说了，应该很多人会），参考[官方文档](https://help.github.com/articles/creating-pages-with-the-automatic-generator)设置，过**十分钟**左右你就可以通过`username.github.io`访问了。
@@ -81,6 +84,7 @@ settings.py的内容大体如下，我也是参考[mx的blog](http://x-wei.githu
 
 我的[settings.py](https://github.com/jacksu/jacksu.github.io/blob/master/settings.py)。
 
+---
 #建站
 把刚才github的项目拉到本地，执行如下命令：
 

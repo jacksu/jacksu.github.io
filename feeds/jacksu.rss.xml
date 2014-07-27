@@ -14,8 +14,9 @@
 &lt;p&gt;pelican不可以识别markdown，需要下载markdown包，markdown的下载方式为：&lt;br&gt;
 &lt;code&gt;sudo pip install Markdown&lt;/code&gt;&lt;/p&gt;
 &lt;h2&gt;主题&lt;/h2&gt;
-&lt;p&gt;没有主题，你的网站太难看了，那么下载一个主题：
-&lt;code&gt;git clone https://github.com/farseerfc/pelican-themes&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;没有主题，你的网站太难看了，那么下载一个主题：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git clone https://github.com/farseerfc/pelican-themes&lt;/code&gt;&lt;/p&gt;
+&lt;hr /&gt;
 &lt;h1&gt;设置&lt;/h1&gt;
 &lt;h2&gt;github上的设置&lt;/h2&gt;
 &lt;p&gt;在github上建立&lt;strong&gt;&lt;code&gt;username.github.io&lt;/code&gt;&lt;/strong&gt;的项目（如何在github建立项目，我就不说了，应该很多人会），参考&lt;a href="https://help.github.com/articles/creating-pages-with-the-automatic-generator"&gt;官方文档&lt;/a&gt;设置，过&lt;strong&gt;十分钟&lt;/strong&gt;左右你就可以通过&lt;code&gt;username.github.io&lt;/code&gt;访问了。&lt;/p&gt;
@@ -72,6 +73,7 @@
 
 
 &lt;p&gt;我的&lt;a href="https://github.com/jacksu/jacksu.github.io/blob/master/settings.py"&gt;settings.py&lt;/a&gt;。&lt;/p&gt;
+&lt;hr /&gt;
 &lt;h1&gt;建站&lt;/h1&gt;
 &lt;p&gt;把刚才github的项目拉到本地，执行如下命令：&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;git clone https://github.com/username/username.github.io&lt;/code&gt;&lt;br&gt;
