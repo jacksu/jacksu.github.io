@@ -11,13 +11,13 @@ AUTHOR = 'jacksu'
 DISQUS_SITENAME = 'jackblog'
 GITHUB_URL = 'https://github.com/jacksu'
 #SITEURL = '<http://jacksu.github.com>'
-GOOGLE_ANALYTICS = 'UA-30756331-1'
+GOOGLE_ANALYTICS = 'UA-53239362-1'
 TAG_FEED_ATOM  = 'feeds/%s.atom.xml'
 TAG_CLOUD_STEPS = 4
 FEED_RSS = 'feeds/all.rss.xml'
 DEFAULT_PAGINATION = 10
 
-DEFAULT_CATEGORY ='MISC'
+DEFAULT_CATEGORY ='BigData'
 OUTPUT_PATH = '.'
 #~ RELATIVE_PATH='true'
 RELATIVE_URLS=1
