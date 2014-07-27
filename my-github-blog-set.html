@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>设置github pages</title>
+    <title>个人github blog环境设置</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -96,8 +96,8 @@
 			<h1>
 				<a href=""
 					rel="bookmark" 
-					title="Permalink to 设置github pages">
-					设置github pages 
+					title="Permalink to 个人github blog环境设置">
+					个人github blog环境设置 
 				</a>
  
 			</h1> 
@@ -119,14 +119,93 @@
 	<a href="./tag/github.html"><i class="icon-tag"></i>github</a>
 </footer><!-- /.post-info -->		</div>
 		<h1>软件安装</h1>
-<p>sudo easy_install pipe<br>
-sudo pip install pelican</p>
+<p>大体需要以下几个东东，个性化的就需要自己去搜寻。</p>
+<h2>pelican</h2>
+<h3>安装</h3>
+<p>我们需要网站的管理工具pelican，pelican可以把markdown的文件生成html和pdf，pelican又依赖于pipe，安装命令如下：<br>
+<code>sudo easy_install pipe</code><br>
+<code>sudo pip install pelican</code><br></p>
+<h3>检查是否安装成功</h3>
+<p>执行如下命令：<br>
+<code>pelican -h</code>或者
+<code>pelican .md所在目录</code></p>
+<h2>Markdown包</h2>
+<p>pelican不可以识别markdown，需要下载markdown包，markdown的下载方式为：<br>
+<code>sudo pip install Markdown</code></p>
+<h2>主题</h2>
+<p>没有主题，你的网站太难看了，那么下载一个主题：
+<code>git clone https://github.com/farseerfc/pelican-themes</code></p>
+<h1>设置</h1>
+<h2>github上的设置</h2>
+<p>在github上建立<strong><code>username.github.io</code></strong>的项目（如何在github建立项目，我就不说了，应该很多人会），参考<a href="https://help.github.com/articles/creating-pages-with-the-automatic-generator">官方文档</a>设置，过<strong>十分钟</strong>左右你就可以通过<code>username.github.io</code>访问了。</p>
+<h2>settings.py设置</h2>
+<p>settings.py的内容大体如下，我也是参考<a href="http://x-wei.github.io/pelican_github_blog.html">mx的blog</a>的.</p>
+<div class="highlight"><pre><span class="err">#</span> <span class="o">-*-</span> <span class="nx">coding</span><span class="p">:</span> <span class="nx">utf</span><span class="o">-</span><span class="mi">8</span> <span class="o">-*-</span>
+<span class="k">import</span> <span class="nx">sys</span>
+
+<span class="n">TIMEZONE</span> <span class="o">=</span> <span class="s1">&#39;Asia/Shanghai&#39;</span>
+
+<span class="n">DEFAULT_LANG</span> <span class="o">=</span> <span class="s1">&#39;zhs&#39;</span>
+
+<span class="n">SITENAME</span> <span class="o">=</span> <span class="s2">&quot;X. Wei&#39;s Blog&quot;</span>
+<span class="n">AUTHOR</span> <span class="o">=</span> <span class="s1">&#39;X.Wei&#39;</span>
+
+<span class="n">DISQUS_SITENAME</span> <span class="o">=</span> <span class="s1">&#39;xweisblog&#39;</span>
+<span class="n">GITHUB_URL</span> <span class="o">=</span> <span class="s1">&#39;&lt;https://github.com/X-Wei&gt;&#39;</span><span class="vi">#github</span><span class="err">链接</span>
+<span class="n">SITEURL</span> <span class="o">=</span> <span class="s1">&#39;&lt;http://x-wei.github.com&gt;&#39;</span>
+<span class="n">GOOGLE_ANALYTICS</span> <span class="o">=</span> <span class="s1">&#39;UA-30756331-1&#39;</span><span class="err">#谷歌站点分析</span>
+<span class="n">TAG_FEED</span>  <span class="o">=</span> <span class="s1">&#39;feeds/%s.atom.xml&#39;</span>
+
+<span class="n">DEFAULT_PAGINATION</span> <span class="o">=</span> <span class="mi">4</span><span class="err">#默认每一页有多少篇文章</span>
+
+<span class="n">DEFAULT_CATEGORY</span> <span class="o">=</span><span class="s1">&#39;misc&#39;</span>
+<span class="n">OUTPUT_PATH</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+<span class="err">#需要把输出路径从默认的</span><span class="s1">&#39;output&#39;</span><span class="err">改成根目录</span><span class="p">(</span><span class="nx">your_id.github.com</span><span class="err">目录</span><span class="p">),</span> <span class="err">因为</span><span class="nx">githubpage</span><span class="err">需要把</span><span class="nx">index.html</span><span class="err">上传到</span><span class="nx">repo</span><span class="err">的</span><span class="nx">master</span><span class="err">分支的根目录才可以</span><span class="o">!</span>
+<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;posts&#39;</span><span class="err">#这个是指定放置</span><span class="bp">.</span><span class="nx">md</span><span class="p">/</span><span class="nx">.rst</span><span class="err">文件的目录</span>
+
+<span class="n">LINKS</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;dofine&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;http://www.dofine.me&gt;&#39;</span><span class="p">),</span>
+         <span class="p">(</span><span class="s1">&#39;farseerfc&#39;</span><span class="p">,</span> <span class="s2">&quot;&lt;http://farseerfc.github.com/&gt;&quot;</span><span class="p">),</span>
+        <span class="p">)</span><span class="err">#友情链接~</span>
+
+<span class="n">SOCIAL</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="p">(</span><span class="s1">&#39;github&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;https://github.com/x-wei&gt;&#39;</span><span class="p">),</span>
+          <span class="p">)</span><span class="err">#社交网络链接</span>
+          <span class="err">#~</span> <span class="p">(</span><span class="s1">&#39;twitter&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;http://twitter.com/farseerfc&gt;&#39;</span><span class="p">),</span>
+          <span class="err">#~</span> <span class="p">(</span><span class="s1">&#39;facebook&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;http://www.facebook.com/farseerfc&gt;&#39;</span><span class="p">),</span>
+          <span class="err">#~</span> <span class="p">(</span><span class="s1">&#39;weibo&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;http://weibo.com/farseerfc&gt;&#39;</span><span class="p">),</span>
+          <span class="err">#~</span> <span class="p">(</span><span class="s1">&#39;renren&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;http://www.renren.com/farseer&gt;&#39;</span><span class="p">),</span>
+
+<span class="err">#这个是</span><span class="nx">farseerfc</span><span class="err">同学自己加的</span><span class="p">,</span> <span class="err">可以显示他的新浪微博内容</span><span class="p">,</span> <span class="err">有微博的话可以把这些加上~</span>
+<span class="err">#~</span> <span class="n">TWITTER_USERNAME</span> <span class="o">=</span> <span class="s1">&#39;farseerfc&#39;</span>
+<span class="err">#~</span> <span class="n">SIDEBAR_CUSTOM</span> <span class="o">=</span> <span class="nb">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">#~ &lt;li class=&quot;</span><span class="nx">nav</span><span class="na">-header</span><span class="s2">&quot;&gt;&lt;h4&gt;&lt;i class=&quot;</span><span class="nx">icon</span><span class="na">-list-alt</span><span class="s2">&quot;&gt;&lt;/i&gt;Weibo&lt;/h4&gt;&lt;/li&gt;</span>
+<span class="s2">#~ &lt;iframe width=&quot;</span><span class="mi">100</span><span class="o">%</span><span class="s2">&quot; height=&quot;</span><span class="mi">550</span><span class="s2">&quot; class=&quot;</span><span class="nx">share_self</span><span class="s2">&quot;  frameborder=&quot;</span><span class="mi">0</span><span class="s2">&quot; scrolling=&quot;</span><span class="nx">no</span><span class="s2">&quot; </span>
+<span class="s2">#~ src=&quot;</span><span class="o">&lt;</span><span class="nx">http</span><span class="p">:</span><span class="c1">//widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=550&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=2&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=1&amp;uid=1862842353&amp;verifier=b193b9de&amp;dpc=1&gt;&quot;&gt;</span>
+<span class="err">#~</span> <span class="o">&lt;/</span><span class="nx">iframe</span><span class="o">&gt;</span>
+<span class="err">#~</span> <span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">#google自定义搜索(大概是站内搜索吧)</span>
+<span class="s2">#~ GOOGLE_CUSTOM_SEARCH_SIDEBAR = &quot;</span><span class="mi">001578481551708017171</span><span class="p">:</span><span class="nx">axpo6yvtdyg</span><span class="s2">&quot;</span>
+<span class="s2">#~ GOOGLE_CUSTOM_SEARCH_NAVBAR = &quot;</span><span class="mi">001578481551708017171</span><span class="p">:</span><span class="nx">hxkva69brmg</span><span class="s2">&quot;</span>
+</pre></div>
+
+
+<p>我的<a href="https://github.com/jacksu/jacksu.github.io/blob/master/settings.py">settings.py</a>。</p>
+<h1>建站</h1>
+<p>把刚才github的项目拉到本地，执行如下命令：</p>
+<p><code>git clone https://github.com/username/username.github.io</code><br>
+<code>pelican -s settings.py -t ../pelican-themes/bootstrap2/ posts/</code></p>
+<p>其中－t后面是你的主题目录，posts是md所在的目录。再执行如下命令:</p>
+<p><code>git add .</code></p>
+<p><code>git commit -m "add"</code></p>
+<p><code>git push</code></p>
+<p>我们的个人网站建成了，可以访问<code>usrname.github.io</code>了。</p>
 		</div><!-- /.entry-content -->
 		<div class="comments">
 		<h2>Comments !</h2>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
-			   var disqus_identifier = "my-super-post.html";
+			   var disqus_identifier = "my-github-blog-set.html";
 			   (function() {
 				var dsq = document.createElement('script'); 
 				dsq.type = 'text/javascript'; dsq.async = true;

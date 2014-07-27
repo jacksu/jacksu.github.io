@@ -1,4 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="http://jacksu.github.io/" rel="alternate"></link><link href="http://jacksu.github.io/feeds/env_set.atom.xml" rel="self"></link><id>http://jacksu.github.io/</id><updated>2014-07-27T00:20:00+02:00</updated><entry><title>设置github pages</title><link href="http://jacksu.github.io/my-super-post.html" rel="alternate"></link><updated>2014-07-27T00:20:00+02:00</updated><author><name>jacksu</name></author><id>tag:jacksu.github.io,2014-07-27:my-super-post.html</id><summary type="html">&lt;h1&gt;软件安装&lt;/h1&gt;
-&lt;p&gt;sudo easy_install pipe&lt;br&gt;
-sudo pip install pelican&lt;/p&gt;</summary><category term="github"></category></entry></feed>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="http://jacksu.github.io/" rel="alternate"></link><link href="http://jacksu.github.io/feeds/env_set.atom.xml" rel="self"></link><id>http://jacksu.github.io/</id><updated>2014-07-27T00:20:00+02:00</updated><entry><title>个人github blog环境设置</title><link href="http://jacksu.github.io/my-github-blog-set.html" rel="alternate"></link><updated>2014-07-27T00:20:00+02:00</updated><author><name>jacksu</name></author><id>tag:jacksu.github.io,2014-07-27:my-github-blog-set.html</id><summary type="html">&lt;h1&gt;软件安装&lt;/h1&gt;
+&lt;p&gt;大体需要以下几个东东，个性化的就需要自己去搜寻。&lt;/p&gt;
+&lt;h2&gt;pelican&lt;/h2&gt;
+&lt;h3&gt;安装&lt;/h3&gt;
+&lt;p&gt;我们需要网站的管理工具pelican，pelican可以把markdown的文件生成html和pdf，pelican又依赖于pipe，安装命令如下：&lt;br&gt;
+&lt;code&gt;sudo easy_install pipe&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo pip install pelican&lt;/code&gt;&lt;br&gt;&lt;/p&gt;
+&lt;h3&gt;检查是否安装成功&lt;/h3&gt;
+&lt;p&gt;执行如下命令：&lt;br&gt;
+&lt;code&gt;pelican -h&lt;/code&gt;或者
+&lt;code&gt;pelican .md所在目录&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;Markdown包&lt;/h2&gt;
+&lt;p&gt;pelican不可以识别markdown，需要下载markdown包，markdown的下载方式为：&lt;br&gt;
+&lt;code&gt;sudo pip install Markdown&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;主题&lt;/h2&gt;
+&lt;p&gt;没有主题，你的网站太难看了，那么下载一个主题：
+&lt;code&gt;git clone https://github.com/farseerfc/pelican-themes&lt;/code&gt;&lt;/p&gt;
+&lt;h1&gt;设置&lt;/h1&gt;
+&lt;h2&gt;github上的设置&lt;/h2&gt;
+&lt;p&gt;在github上建立&lt;strong&gt;&lt;code&gt;username.github.io&lt;/code&gt;&lt;/strong&gt;的项目（如何在github建立项目，我就不说了，应该很多人会），参考&lt;a href="https://help.github.com/articles/creating-pages-with-the-automatic-generator"&gt;官方文档&lt;/a&gt;设置，过&lt;strong&gt;十分钟&lt;/strong&gt;左右你就可以通过&lt;code&gt;username.github.io&lt;/code&gt;访问了。&lt;/p&gt;
+&lt;h2&gt;settings.py设置&lt;/h2&gt;
+&lt;p&gt;settings.py的内容大体如下，我也是参考&lt;a href="http://x-wei.github.io/pelican_github_blog.html"&gt;mx的blog&lt;/a&gt;的.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="o"&gt;-*-&lt;/span&gt; &lt;span class="nx"&gt;coding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;utf&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt; &lt;span class="o"&gt;-*-&lt;/span&gt;
+&lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;sys&lt;/span&gt;
+
+&lt;span class="n"&gt;TIMEZONE&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Asia/Shanghai&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;DEFAULT_LANG&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;zhs&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;SITENAME&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;X. Wei&amp;#39;s Blog&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;AUTHOR&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;X.Wei&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;DISQUS_SITENAME&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;xweisblog&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;GITHUB_URL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;https://github.com/X-Wei&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="vi"&gt;#github&lt;/span&gt;&lt;span class="err"&gt;链接&lt;/span&gt;
+&lt;span class="n"&gt;SITEURL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://x-wei.github.com&amp;gt;&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;GOOGLE_ANALYTICS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;UA-30756331-1&amp;#39;&lt;/span&gt;&lt;span class="err"&gt;#谷歌站点分析&lt;/span&gt;
+&lt;span class="n"&gt;TAG_FEED&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;feeds/%s.atom.xml&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;DEFAULT_PAGINATION&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="err"&gt;#默认每一页有多少篇文章&lt;/span&gt;
+
+&lt;span class="n"&gt;DEFAULT_CATEGORY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;misc&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;OUTPUT_PATH&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;
+&lt;span class="err"&gt;#需要把输出路径从默认的&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;output&amp;#39;&lt;/span&gt;&lt;span class="err"&gt;改成根目录&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;your_id.github.com&lt;/span&gt;&lt;span class="err"&gt;目录&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="err"&gt;因为&lt;/span&gt;&lt;span class="nx"&gt;githubpage&lt;/span&gt;&lt;span class="err"&gt;需要把&lt;/span&gt;&lt;span class="nx"&gt;index.html&lt;/span&gt;&lt;span class="err"&gt;上传到&lt;/span&gt;&lt;span class="nx"&gt;repo&lt;/span&gt;&lt;span class="err"&gt;的&lt;/span&gt;&lt;span class="nx"&gt;master&lt;/span&gt;&lt;span class="err"&gt;分支的根目录才可以&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;
+&lt;span class="n"&gt;PATH&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;posts&amp;#39;&lt;/span&gt;&lt;span class="err"&gt;#这个是指定放置&lt;/span&gt;&lt;span class="bp"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;md&lt;/span&gt;&lt;span class="p"&gt;/&lt;/span&gt;&lt;span class="nx"&gt;.rst&lt;/span&gt;&lt;span class="err"&gt;文件的目录&lt;/span&gt;
+
+&lt;span class="n"&gt;LINKS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dofine&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://www.dofine.me&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;farseerfc&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;lt;http://farseerfc.github.com/&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="err"&gt;#友情链接~&lt;/span&gt;
+
+&lt;span class="n"&gt;SOCIAL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;github&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;https://github.com/x-wei&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+          &lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="err"&gt;#社交网络链接&lt;/span&gt;
+          &lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;twitter&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://twitter.com/farseerfc&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+          &lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;facebook&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://www.facebook.com/farseerfc&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+          &lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;weibo&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://weibo.com/farseerfc&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+          &lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;renren&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;http://www.renren.com/farseer&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+
+&lt;span class="err"&gt;#这个是&lt;/span&gt;&lt;span class="nx"&gt;farseerfc&lt;/span&gt;&lt;span class="err"&gt;同学自己加的&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="err"&gt;可以显示他的新浪微博内容&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="err"&gt;有微博的话可以把这些加上~&lt;/span&gt;
+&lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="n"&gt;TWITTER_USERNAME&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;farseerfc&amp;#39;&lt;/span&gt;
+&lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="n"&gt;SIDEBAR_CUSTOM&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;r&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class="s2"&gt;#~ &amp;lt;li class=&amp;quot;&lt;/span&gt;&lt;span class="nx"&gt;nav&lt;/span&gt;&lt;span class="na"&gt;-header&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&amp;gt;&amp;lt;h4&amp;gt;&amp;lt;i class=&amp;quot;&lt;/span&gt;&lt;span class="nx"&gt;icon&lt;/span&gt;&lt;span class="na"&gt;-list-alt&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&amp;gt;&amp;lt;/i&amp;gt;Weibo&amp;lt;/h4&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;span class="s2"&gt;#~ &amp;lt;iframe width=&amp;quot;&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; height=&amp;quot;&lt;/span&gt;&lt;span class="mi"&gt;550&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; class=&amp;quot;&lt;/span&gt;&lt;span class="nx"&gt;share_self&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  frameborder=&amp;quot;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; scrolling=&amp;quot;&lt;/span&gt;&lt;span class="nx"&gt;no&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &lt;/span&gt;
+&lt;span class="s2"&gt;#~ src=&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;http&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="c1"&gt;//widget.weibo.com/weiboshow/index.php?language=&amp;amp;width=0&amp;amp;height=550&amp;amp;fansRow=1&amp;amp;ptype=1&amp;amp;speed=0&amp;amp;skin=2&amp;amp;isTitle=1&amp;amp;noborder=1&amp;amp;isWeibo=1&amp;amp;isFans=1&amp;amp;uid=1862842353&amp;amp;verifier=b193b9de&amp;amp;dpc=1&amp;gt;&amp;quot;&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nx"&gt;iframe&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;#~&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+&lt;span class="s2"&gt;#google自定义搜索(大概是站内搜索吧)&lt;/span&gt;
+&lt;span class="s2"&gt;#~ GOOGLE_CUSTOM_SEARCH_SIDEBAR = &amp;quot;&lt;/span&gt;&lt;span class="mi"&gt;001578481551708017171&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nx"&gt;axpo6yvtdyg&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="s2"&gt;#~ GOOGLE_CUSTOM_SEARCH_NAVBAR = &amp;quot;&lt;/span&gt;&lt;span class="mi"&gt;001578481551708017171&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nx"&gt;hxkva69brmg&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;我的&lt;a href="https://github.com/jacksu/jacksu.github.io/blob/master/settings.py"&gt;settings.py&lt;/a&gt;。&lt;/p&gt;
+&lt;h1&gt;建站&lt;/h1&gt;
+&lt;p&gt;把刚才github的项目拉到本地，执行如下命令：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git clone https://github.com/username/username.github.io&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;pelican -s settings.py -t ../pelican-themes/bootstrap2/ posts/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;其中－t后面是你的主题目录，posts是md所在的目录。再执行如下命令:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git add .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git commit -m "add"&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;我们的个人网站建成了，可以访问&lt;code&gt;usrname.github.io&lt;/code&gt;了。&lt;/p&gt;</summary><category term="github"></category></entry></feed>
