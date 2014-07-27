@@ -5,7 +5,7 @@ Category: env_set
 Tags: github
 Slug: my-github-blog-set
 Author: jacksu
-Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客终于捣鼓好了，也给大家介绍一下建站步骤。
+Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客（**[jacksu blog](jacksu.github.io)**）终于捣鼓好了，也给大家介绍一下建站步骤。
 
 #软件安装
 
@@ -84,6 +84,25 @@ settings.py的内容大体如下，我也是参考[mx的blog](http://x-wei.githu
 
 我的[settings.py](https://github.com/jacksu/jacksu.github.io/blob/master/settings.py)。
 
+##md头
+每个md文件必须包含下面相关内容，各个字段含义应该通过英文意思就可以看出来。
+
+Title: 个人github blog环境设置
+
+Date: 2014-7-27 00:20
+
+Modified: 2014-7-27 00:20
+
+Category: env_set
+
+Tags: github
+
+Slug: my-github-blog-set
+
+Author: jacksu
+
+Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客终于捣鼓好了，也给大家介绍一下建站步骤。
+
 ---
 #建站
 把刚才github的项目拉到本地，执行如下命令：
@@ -99,4 +118,7 @@ settings.py的内容大体如下，我也是参考[mx的blog](http://x-wei.githu
 
 `git push`
 
-我们的个人网站建成了，可以访问`usrname.github.io`了。
+我们的个人网站建成了，可以访问`usrname.github.io`了.
+
+---
+**[jacksu blog](jacksu.github.io)**

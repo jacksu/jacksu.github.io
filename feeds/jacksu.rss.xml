@@ -73,6 +73,16 @@
 
 
 &lt;p&gt;我的&lt;a href="https://github.com/jacksu/jacksu.github.io/blob/master/settings.py"&gt;settings.py&lt;/a&gt;。&lt;/p&gt;
+&lt;h2&gt;md头&lt;/h2&gt;
+&lt;p&gt;每个md文件必须包含下面相关内容，各个字段含义应该通过英文意思就可以看出来。&lt;/p&gt;
+&lt;p&gt;Title: 个人github blog环境设置&lt;/p&gt;
+&lt;p&gt;Date: 2014-7-27 00:20&lt;/p&gt;
+&lt;p&gt;Modified: 2014-7-27 00:20&lt;/p&gt;
+&lt;p&gt;Category: env_set&lt;/p&gt;
+&lt;p&gt;Tags: github&lt;/p&gt;
+&lt;p&gt;Slug: my-github-blog-set&lt;/p&gt;
+&lt;p&gt;Author: jacksu&lt;/p&gt;
+&lt;p&gt;Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客终于捣鼓好了，也给大家介绍一下建站步骤。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h1&gt;建站&lt;/h1&gt;
 &lt;p&gt;把刚才github的项目拉到本地，执行如下命令：&lt;/p&gt;
@@ -82,4 +92,6 @@
 &lt;p&gt;&lt;code&gt;git add .&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;git commit -m "add"&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;git push&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;我们的个人网站建成了，可以访问&lt;code&gt;usrname.github.io&lt;/code&gt;了。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jacksu</dc:creator><pubDate>Sun, 27 Jul 2014 00:20:00 +0200</pubDate><guid>tag:jacksu.github.io,2014-07-27:my-github-blog-set.html</guid><category>github</category></item></channel></rss>
+&lt;p&gt;我们的个人网站建成了，可以访问&lt;code&gt;usrname.github.io&lt;/code&gt;了.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href="jacksu.github.io"&gt;jacksu blog&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jacksu</dc:creator><pubDate>Sun, 27 Jul 2014 00:20:00 +0200</pubDate><guid>tag:jacksu.github.io,2014-07-27:my-github-blog-set.html</guid><category>github</category></item></channel></rss>
