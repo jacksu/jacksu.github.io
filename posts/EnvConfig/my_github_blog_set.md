@@ -1,11 +1,11 @@
 Title: 个人github blog环境设置
 Date: 2014-7-27 00:20
 Modified: 2014-7-27 00:20
-Category: env_set
+Category: 环境配置
 Tags: github
 Slug: my-github-blog-set
 Author: jacksu
-Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客（**[jacksu blog](jacksu.github.io)**）终于捣鼓好了，也给大家介绍一下建站步骤。
+Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客（**[jacksu blog](http://jacksu.github.io)**）终于捣鼓好了，也给大家介绍一下建站步骤。
 
 #软件安装
 
@@ -121,4 +121,4 @@ Summary: 每个人都想拥有自己的网站，但是大部分比较屌丝，�
 我们的个人网站建成了，可以访问`usrname.github.io`了.
 
 ---
-**[jacksu blog](jacksu.github.io)**
+**[jacksu blog](htttp://jacksu.github.io)**
