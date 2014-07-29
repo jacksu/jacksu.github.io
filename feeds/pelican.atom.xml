@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="http://jacksu.github.io/" rel="alternate"></link><link href="http://jacksu.github.io/feeds/pelican.atom.xml" rel="self"></link><id>http://jacksu.github.io/</id><updated>2010-12-05T19:30:00+01:00</updated><entry><title>My super title</title><link href="http://jacksu.github.io/my-super-post.html" rel="alternate"></link><updated>2010-12-05T19:30:00+01:00</updated><author><name>Alexis Metaireau</name></author><id>tag:jacksu.github.io,2010-12-03:my-super-post.html</id><summary type="html">&lt;h1&gt;设置githup pages&lt;/h1&gt;
-&lt;h2&gt;软件安装&lt;/h2&gt;
-&lt;p&gt;sudo easy_install pipe&lt;br&gt;
-sudo pip install pelican&lt;/p&gt;</summary><category term="pelican"></category><category term="publishing"></category></entry></feed>

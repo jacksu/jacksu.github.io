@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jack's Blog</title>
+    <title>Linux内核策略介绍学习笔记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -75,7 +75,7 @@
 						<i class="icon-folder-open icon-large"></i>环境配置
 					</a>
                   </li>
-                  <li >
+                  <li class="active">
                     <a href="./category/系统.html">
 						<i class="icon-folder-open icon-large"></i>系统
 					</a>
@@ -95,19 +95,261 @@
     <div class="container-fluid">
       <div class="row">
         <div class="span9" id="content">
+<section id="content">    
+	<article>
+		<header>
+			<h1>
+				<a href=""
+					rel="bookmark" 
+					title="Permalink to Linux内核策略介绍学习笔记">
+					Linux内核策略介绍学习笔记 
+				</a>
+ 
+			</h1> 
+		</header>
+		<div class="entry-content">
+		<div class="well">
+<footer class="post-info">
+<span class="label">Date</span>
+<abbr class="published" title="2014-07-28T20:20:00">
+	<i class="icon-calendar"></i>一 28 七月 2014
+</abbr>
+<span class="label">By</span>
+<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
+<span class="label">Category</span>
+<a href="./category/xi-tong.html"><i class="icon-folder-open"></i>系统</a>. 
+
+	
+<span class="label">Tags</span> 
+	<a href="./tag/linux.html"><i class="icon-tag"></i>linux</a>
+</footer><!-- /.post-info -->		</div>
+		<h1>主要内容</h1>
+<table>
+<thead>
+<tr>
+<th>硬件</th>
+<th>策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td>进程调度、系统调用、中断</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>内存管理</td>
+</tr>
+<tr>
+<td>外存</td>
+<td>文件IO</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>协议栈</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>时间管理</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="linux kernel map" src="http://p.blog.csdn.net/images/p_blog_csdn_net/gausing/EntryImages/20090609/linux内核代码架构图-清晰版.png" /></p>
+<hr />
+<h2>进程调度</h2>
+<h3>内核的运行时间</h3>
+<p>系统启动、中断发生、系统调用以及<strong>内核线程</strong>。</p>
+<h3>进程和线程的区别</h3>
+<blockquote>
 <ul>
-<li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
-<li class="tag-4">
-	<a href="./tag/linux.html">
-		<i class="icon-tag icon-large"></i>linux
-	</a>
-</li>
-<li class="tag-4">
-	<a href="./tag/github.html">
-		<i class="icon-tag icon-large"></i>github
-	</a>
-</li>
+<li>在linux中，底层都是调用clone函数。</li>
+<li>进程创建为60～8000次/s，线程为5～10w/s</li>
+<li>进程创建调用fork()，主要瓶颈在页表复制，如果一个进程没有访问内存，页表共享的内存栈不需要复制页表。（例如：一个网络处理服务，只是收到包，fork进程进行内存访问，性能应该在一万左右，但是如果主进程简单做一些处理的话，性能就会下降为一千左右。）</li>
+<li>线程创建调用pthread_create(),主要瓶颈在堆栈(8k)分配上，如果并发线程增多1w时约为5w</li>
+<li>并发性能CPU切换，进程30～100w/s,线程50～150w/s</li>
+<li>内存消耗，进程要比线程更消耗内存(3~N倍)</li>
 </ul>
+</blockquote>
+<h3>进程调度</h3>
+<blockquote>
+<ul>
+<li>sched_yield更细粒度让出cpu</li>
+<li>各个核都有自己的运行队列</li>
+<li>就近balance原则，运行clone、wakeup的进程就在该核</li>
+<li>CPU绑定函数sched_setaffinity</li>
+</ul>
+</blockquote>
+<h2>中断</h2>
+<blockquote>
+<ul>
+<li>通过/proc/interrupt查看中断</li>
+<li>中断主要来源于时钟、网卡、硬盘</li>
+<li>通过/proc/irq/N/smp_affinity查看在那个核</li>
+<li>调度顺序：硬中断调度－&gt;软中断－&gt;进程调度</li>
+</ul>
+</blockquote>
+<h2>常用系统调用性能</h2>
+<p>是在C类机器测试，自己使用最好在自己的机器类型测试。</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">性能（次/秒）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">ntohl</td>
+<td align="center">2.5亿</td>
+</tr>
+<tr>
+<td align="center">memset 1k</td>
+<td align="center">150w</td>
+</tr>
+<tr>
+<td align="center">getppid</td>
+<td align="center">100w</td>
+</tr>
+<tr>
+<td align="center">gettimeofday</td>
+<td align="center">30~400w</td>
+</tr>
+<tr>
+<td align="center">time</td>
+<td align="center">30w~400w~1000w</td>
+</tr>
+<tr>
+<td align="center">shmget</td>
+<td align="center">300w</td>
+</tr>
+<tr>
+<td align="center">shmat</td>
+<td align="center">40w</td>
+</tr>
+<tr>
+<td align="center">socket</td>
+<td align="center">10w~50w</td>
+</tr>
+<tr>
+<td align="center">sendto</td>
+<td align="center">40w</td>
+</tr>
+<tr>
+<td align="center">fork</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">pthread_create</td>
+<td align="center">5~10w</td>
+</tr>
+</tbody>
+</table>
+<h3>工具</h3>
+<blockquote>
+<ul>
+<li>stack</li>
+<li>perf</li>
+</ul>
+</blockquote>
+<hr />
+<h2>内存管理</h2>
+<blockquote>
+<ul>
+<li>查看进程地址空间/proc/PID/maps或者pmap</li>
+<li>防止内存交换出去调用mlock，如果内存使用非常紧张的时候得注意</li>
+<li>空闲内存计算：/proc/meminfo查看，MemFree+cached+buffer-Mapped</li>
+</ul>
+</blockquote>
+<h2>共享内存建立方法</h2>
+<blockquote>
+<ul>
+<li>IPC 我们经常使用</li>
+<li>shm_open，文件操作，方便append和dump</li>
+<li>tmpfs可以直接挂载到某个盘</li>
+<li>hugetlbfs节省页表空间</li>
+</ul>
+</blockquote>
+<h2>内存权限</h2>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">shared</th>
+<th align="center">private</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">File</td>
+<td align="center">共享内存</td>
+<td align="center">数据段、代码段</td>
+</tr>
+<tr>
+<td align="center">anon</td>
+<td align="center">父子进程</td>
+<td align="center">堆</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>文件IO</h2>
+<p>文件系统层次架构</p>
+<blockquote>
+<ul>
+<li>VFS Layer</li>
+<li>NFS EXT2 EXT3 NTFS</li>
+<li>Page Cache</li>
+<li>Generic Block Layer</li>
+<li>I/O Scheduler Layer</li>
+<li>Block Device Driver Layer</li>
+<li>Block Device Layer</li>
+</ul>
+</blockquote>
+<p>PageCache起了缓存得作用，采用read ahead机制，如果我们顺序读性能比较好，随机读性能就比较差了。对于写，如果在pagecache中存在，那么直接写PacheCache中的页就可以，否则需要加载该页内容，然后写入PageCache，最后delay write。</p>
+<p>虚拟文件系统为filetab[fd]-&gt;file-&gt;dentry-&gt;inode-&gt;mapping.dentry采用全局hash，查找性能为30～35w/s,100w个文件也为30w/s。</p>
+<p>EXT3添加了日志模式，由高到低为journal、ordered、writeback</p>
+<h2>协议栈</h2>
+<p><img alt="prototcol_stack" src="../../static/system/protocol_stack" /></p>
+<ul>
+<li>
+<p>recv_queue中的包大小，为内核的包大小，而不是ip包大小。</p>
+</li>
+<li>
+<p>如果发出去的包太大，需要修改write_queue和tx_queue两个参数，tx_queue主要是流量控制。</p>
+</li>
+<li>多进程必须在socket后再fork，即使设置了REUSEADDR，从hashtable看出原因。</li>
+<li>net.ipv4.tcp_max_syn_backlog参数决定了SYN_RECV状态队列的数量，一般默认值为512或者1024，即超过这个数量，系统将不再接受新的TCP连接请求.</li>
+<li><a href="http://blog.csdn.net/justlinux2010/article/details/12619761">sync cookie</a>,外网要注意，同一个集线器来的用户，可能导致大量不可以建立链接。</li>
+<li>somaxconn决定了listen监听队列的大小</li>
+<li>select有1024的限制，即使没有达到1024，但是分配的fd大于1024也会有问题。</li>
+<li>epoll多用于单进程多线程</li>
+</ul>
+<h2>时间</h2>
+<ul>
+<li>gettimeofday根据硬件不同性能差距很大</li>
+<li>usleep(1),睡眠不一定是1微妙，有可能是毫秒级的，也和硬件有关。</li>
+</ul>
+<h2>参考文献</h2>
+<p>man 2</p>
+<p>man 7</p>
+<p>ULK</p>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+		<h2>Comments !</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			   var disqus_identifier = "linux-kernel-introduce.html";
+			   (function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://jackblog.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || 
+				 document.getElementsByTagName('body')[0]).appendChild(dsq);
+			  })();
+			</script>
+		</div>
+	</article>
+</section>
         </div><!--/span-->
       
 		<div class="span3 well sidebar-nav" id="sidebar">
