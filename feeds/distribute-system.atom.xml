@@ -69,8 +69,9 @@
 &lt;p&gt;&lt;strong&gt;可用性和性能&lt;/strong&gt;是系统必须保证的，更高一级，可以考虑SLA（服务等级协议），如果我写数据，如何更快在其他地方看到？&lt;/p&gt;
 &lt;p&gt;在数据被写入时，什么可以保证耐久性？如果让系统运行一个计算，如何迅速返回结果？当组件发生故障，执行取出操作，什么样的影响将在在系统上？&lt;/p&gt;
 &lt;h2&gt;设计技术：partition and replicate&lt;/h2&gt;
-&lt;p&gt;如果要把数据分布在不同节点，那么上面两个技术非常关键。数据可以被分割在多个节点（partition），以允许更多的并行处理。也可以被复制或缓存在不同的节点上，以减少客户端和服务器之间距离以及更大的容错性（replicate）&lt;/p&gt;
-&lt;p&gt;partitioning是把数据分成相互独立的数据集，这样可以避免数据的增长带来的影响。partitioning是通过限制被检查数据集的大小和定位相关数据在相同partition来提高性能的（如一个数据一分钟的记录，那么这个数据分布在一台机器和多台机器性能是截然不同的）。容许partition独立失败，来挺高可用性。在不可用情况下，容易更多节点失败。&lt;/p&gt;
+&lt;p&gt;如果要把数据分布在不同节点，那么上面两个技术非常关键。数据可以被分割在多个节点（partition），以允许更多的并行处理。也可以被复制或缓存在不同的节点上，以减少客户端和服务器之间距离以及更大的容错性（replicate）
+&lt;img alt="partition" src="http://book.mixu.net/distsys/images/part-repl.png" /&gt;
+partitioning是把数据分成相互独立的数据集，这样可以避免数据的增长带来的影响。partitioning是通过限制被检查数据集的大小和定位相关数据在相同partition来提高性能的（如一个数据一分钟的记录，那么这个数据分布在一台机器和多台机器性能是截然不同的）。容许partition独立失败，来挺高可用性。在不可用情况下，容易更多节点失败。&lt;/p&gt;
 &lt;p&gt;replication可以通过复制数据集，提高计算和带宽能力。可以提高可用性，在不可用情况下，容易更多节点失败。当然replication又会带来一致性问题，后面再讨论一致性的问题。&lt;/p&gt;
 &lt;h2&gt;参考文献：&lt;/h2&gt;
 &lt;blockquote&gt;
