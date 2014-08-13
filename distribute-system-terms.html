@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Linux内核策略介绍学习笔记</title>
+    <title>分布式系统－terms</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -70,7 +70,7 @@
           <div class="nav-collapse">
             <ul class="nav">
 			  <li class="divider-vertical"></li>
-                  <li >
+                  <li class="active">
                     <a href="./category/大数据.html">
 						<i class="icon-folder-open icon-large"></i>大数据
 					</a>
@@ -80,7 +80,7 @@
 						<i class="icon-folder-open icon-large"></i>环境配置
 					</a>
                   </li>
-                  <li class="active">
+                  <li >
                     <a href="./category/系统.html">
 						<i class="icon-folder-open icon-large"></i>系统
 					</a>
@@ -106,8 +106,8 @@
 			<h1>
 				<a href=""
 					rel="bookmark" 
-					title="Permalink to Linux内核策略介绍学习笔记">
-					Linux内核策略介绍学习笔记 
+					title="Permalink to 分布式系统－terms">
+					分布式系统－terms 
 				</a>
  
 			</h1> 
@@ -116,234 +116,106 @@
 		<div class="well">
 <footer class="post-info">
 <span class="label">Date</span>
-<abbr class="published" title="2014-07-28T20:20:00">
-	<i class="icon-calendar"></i>一 28 七月 2014
+<abbr class="published" title="2014-08-13T11:20:00">
+	<i class="icon-calendar"></i>三 13 八月 2014
 </abbr>
 <span class="label">By</span>
 <a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
 <span class="label">Category</span>
-<a href="./category/xi-tong.html"><i class="icon-folder-open"></i>系统</a>. 
+<a href="./category/da-shu-ju.html"><i class="icon-folder-open"></i>大数据</a>. 
 
 	
 <span class="label">Tags</span> 
-	<a href="./tag/linux.html"><i class="icon-tag"></i>linux</a>
+	<a href="./tag/distribute-system.html"><i class="icon-tag"></i>distribute system</a>
 </footer><!-- /.post-info -->		</div>
-		<h1>主要内容</h1>
+		<p>Distributed programming is the art of solving the same problem that you can solve on a single computer using multiple computers.</p>
+<h2>Scalability</h2>
+<p>处理每件事情都需要注意它的规模，如果规模达到一定程度，处理的难度明显加强。例如你可以计算出一个房间中的人数，但是很难计算出一个国家的人数。在一个可扩展的分布式系统中，系统从小变大，但是相关性能没有变差。</p>
+<p>比如在单机文件系统上加 RAID5 做数据冗余，来解决单机文件系统的可靠性问题。假设 RAID5 的数据修复时间是1天（实际上往往做不到，尤其是业务系统本身压力比较大的情况下，留给 RAID 修复用的磁盘读写带宽很有限），这种方案单机的可靠性大概是100年丢失一次数据（即可靠性是2个9）。看起来尚可？但是你得小心两种情况。一种是你的集群规模变大，你仍然沿用这个土方法，比如你现在有 100 台这样的机器，那么就会变成1年就丢失一次数据。另一种情况是如果实际数据修复时间是 3 天，那么单机的可靠性就直降至4年丢失一次数据，100台就会是15天丢失一次数据。这个数字显然无法让人接受。</p>
+<p>scalability（可扩展性）是指在一个系统、网络以及处理能力范围内，可以处理不断增长的任务，并它们可以加强自己的能力来适应任务的增长（有点儿抽象）。</p>
+<blockquote>
+<ul>
+<li>大小可扩展性：增加节点可以线性增加性能，并数据集的增加不增加延迟性</li>
+<li>地理位置可扩展性：数据中心间延迟性采用合理的方式处理，则可以跨数据中心，减少用户数据查询响应时间</li>
+<li>管理可扩展性：增加更多的节点不增加管理的开销</li>
+</ul>
+</blockquote>
+<h2>Performance</h2>
+<p>性能特点是在一定任务情况下，系统处理所需要的时间和资源使用量来衡量的。如快速回复（低延迟性）、高吞吐量以及计算资源低使用率。但是这几个性能，在实际中只能权衡。</p>
+<h2>latency</h2>
+<p>延迟性指事件初始化和发生的时间段。比如在分布式系统中写操作，就写发生到新的数据可以被用户看到的时间段。latency经常要受一些硬件（ram的性能、cpu性能）的限制。</p>
+<h2>Availability</h2>
+<p>指系统处在运行状态时间的比例，用户不可以访问，那么系统就是不可用。
+分布式系统上可以获得单机非常的特性，比如单机就是无法容忍机器宕机。分布式系统可以由一些非常不好的组件构成，但是可以提供可信赖的系统。 </p>
+<p><code>Availability = uptime / (uptime + downtime)</code>   </p>
+<p>例如：</p>
 <table>
 <thead>
 <tr>
-<th>硬件</th>
-<th>策略</th>
+<th>Availability %</th>
+<th>How much downtime is allowed per year?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>CPU</td>
-<td>进程调度、系统调用、中断</td>
+<td>90% ("one nine")</td>
+<td>More than a month</td>
 </tr>
 <tr>
-<td>内存</td>
-<td>内存管理</td>
+<td>99% ("two nines")</td>
+<td>Less than 4 days</td>
 </tr>
 <tr>
-<td>外存</td>
-<td>文件IO</td>
+<td>99.9% ("three nines")</td>
+<td>Less than 9 hours</td>
 </tr>
 <tr>
-<td>网络</td>
-<td>协议栈</td>
+<td>99.99% ("four nines")</td>
+<td>Less than an hour</td>
 </tr>
 <tr>
-<td>其他</td>
-<td>时间管理</td>
+<td>99.999% ("five nines")</td>
+<td>~ 5 minutes</td>
+</tr>
+<tr>
+<td>99.9999% ("six nines")</td>
+<td>~ 31 seconds</td>
 </tr>
 </tbody>
 </table>
-<p><img alt="linux kernel map" src="http://p.blog.csdn.net/images/p_blog_csdn_net/gausing/EntryImages/20090609/linux内核代码架构图-清晰版.png" /></p>
-<hr />
-<h2>进程调度</h2>
-<h3>内核的运行时间</h3>
-<p>系统启动、中断发生、系统调用以及<strong>内核线程</strong>。</p>
-<h3>进程和线程的区别</h3>
+<p>availability不仅仅是uptime，还可能受网络中断以及该业务超出系统的功能的影响。</p>
+<h2>Fault tolerance</h2>
+<p>指在故障发生时，系统还可以正常运行（和没有发生故障时功能相同）的能力。</p>
+<p>容错归结为：确定你所期望的故障，然后设计一个系统或一个算法可以容错他们。没有考虑过故障是无法容错的。</p>
+<h2>什么在阻止我们获得理想的状态呢？</h2>
+<p>有以下两个硬件方面的因素：</p>
+<p>1 nodes的数量</p>
+<p>2 nodes的距离</p>
+<p>伴随着以下限制：</p>
+<p>1 独立节点的增加，就增加了系统失败的概率（减小了availability并增加了管理成本）</p>
+<p>2 独立节点的增加，就增加了节点的通信 （降低了可扩展的performance）</p>
+<p>3 节点的跨机房部署，增加了节点之间的延迟性（降低了某些操作的performance）</p>
+<p><strong>可用性和性能</strong>是系统必须保证的，更高一级，可以考虑SLA（服务等级协议），如果我写数据，如何更快在其他地方看到？</p>
+<p>在数据被写入时，什么可以保证耐久性？如果让系统运行一个计算，如何迅速返回结果？当组件发生故障，执行取出操作，什么样的影响将在在系统上？</p>
+<h2>设计技术：partition and replicate</h2>
+<p>如果要把数据分布在不同节点，那么上面两个技术非常关键。数据可以被分割在多个节点（partition），以允许更多的并行处理。也可以被复制或缓存在不同的节点上，以减少客户端和服务器之间距离以及更大的容错性（replicate）</p>
+<p>partitioning是把数据分成相互独立的数据集，这样可以避免数据的增长带来的影响。partitioning是通过限制被检查数据集的大小和定位相关数据在相同partition来提高性能的（如一个数据一分钟的记录，那么这个数据分布在一台机器和多台机器性能是截然不同的）。容许partition独立失败，来挺高可用性。在不可用情况下，容易更多节点失败。</p>
+<p>replication可以通过复制数据集，提高计算和带宽能力。可以提高可用性，在不可用情况下，容易更多节点失败。当然replication又会带来一致性问题，后面再讨论一致性的问题。</p>
+<h2>参考文献：</h2>
 <blockquote>
 <ul>
-<li>在linux中，底层都是调用clone函数。</li>
-<li>进程创建为60～8000次/s，线程为5～10w/s</li>
-<li>进程创建调用fork()，主要瓶颈在页表复制，如果一个进程没有访问内存，页表共享的内存栈不需要复制页表。（例如：一个网络处理服务，只是收到包，fork进程进行内存访问，性能应该在一万左右，但是如果主进程简单做一些处理的话，性能就会下降为一千左右。）</li>
-<li>线程创建调用pthread_create(),主要瓶颈在堆栈(8k)分配上，如果并发线程增多1w时约为5w</li>
-<li>并发性能CPU切换，进程30～100w/s,线程50～150w/s</li>
-<li>内存消耗，进程要比线程更消耗内存(3~N倍)</li>
+<li><a href="http://www.morganclaypool.com/doi/pdf/10.2200/s00193ed1v01y200905cac006">The Datacenter as a Computer - An Introduction to the Design of Warehouse-Scale Machines - Barroso &amp; Hölzle, 2008</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Fallacies_of_Distributed_Computing">Fallacies of Distributed Computing</a></li>
+<li><a href="http://www.somethingsimilar.com/2013/01/14/notes-on-distributed-systems-for-young-bloods/">Notes on Distributed Systems for Young Bloods - Hodges, 2013</a></li>
+<li><a href="http://book.mixu.net/distsys/intro.html">Distributed systems at a high level</a></li>
 </ul>
 </blockquote>
-<h3>进程调度</h3>
-<blockquote>
-<ul>
-<li>sched_yield更细粒度让出cpu</li>
-<li>各个核都有自己的运行队列</li>
-<li>就近balance原则，运行clone、wakeup的进程就在该核</li>
-<li>CPU绑定函数sched_setaffinity</li>
-</ul>
-</blockquote>
-<h2>中断</h2>
-<blockquote>
-<ul>
-<li>通过/proc/interrupt查看中断</li>
-<li>中断主要来源于时钟、网卡、硬盘</li>
-<li>通过/proc/irq/N/smp_affinity查看在那个核</li>
-<li>调度顺序：硬中断调度－&gt;软中断－&gt;进程调度</li>
-</ul>
-</blockquote>
-<h2>常用系统调用性能</h2>
-<p>是在C类机器测试，自己使用最好在自己的机器类型测试。</p>
-<table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center">性能（次/秒）</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">ntohl</td>
-<td align="center">2.5亿</td>
-</tr>
-<tr>
-<td align="center">memset 1k</td>
-<td align="center">150w</td>
-</tr>
-<tr>
-<td align="center">getppid</td>
-<td align="center">100w</td>
-</tr>
-<tr>
-<td align="center">gettimeofday</td>
-<td align="center">30~400w</td>
-</tr>
-<tr>
-<td align="center">time</td>
-<td align="center">30w~400w~1000w</td>
-</tr>
-<tr>
-<td align="center">shmget</td>
-<td align="center">300w</td>
-</tr>
-<tr>
-<td align="center">shmat</td>
-<td align="center">40w</td>
-</tr>
-<tr>
-<td align="center">socket</td>
-<td align="center">10w~50w</td>
-</tr>
-<tr>
-<td align="center">sendto</td>
-<td align="center">40w</td>
-</tr>
-<tr>
-<td align="center">fork</td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">pthread_create</td>
-<td align="center">5~10w</td>
-</tr>
-</tbody>
-</table>
-<h3>工具</h3>
-<blockquote>
-<ul>
-<li>stack</li>
-<li>perf</li>
-</ul>
-</blockquote>
-<hr />
-<h2>内存管理</h2>
-<blockquote>
-<ul>
-<li>查看进程地址空间/proc/PID/maps或者pmap</li>
-<li>防止内存交换出去调用mlock，如果内存使用非常紧张的时候得注意</li>
-<li>空闲内存计算：/proc/meminfo查看，MemFree+cached+buffer-Mapped</li>
-</ul>
-</blockquote>
-<h2>共享内存建立方法</h2>
-<blockquote>
-<ul>
-<li>IPC 我们经常使用</li>
-<li>shm_open，文件操作，方便append和dump</li>
-<li>tmpfs可以直接挂载到某个盘</li>
-<li>hugetlbfs节省页表空间</li>
-</ul>
-</blockquote>
-<h2>内存权限</h2>
-<table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center">shared</th>
-<th align="center">private</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">File</td>
-<td align="center">共享内存</td>
-<td align="center">数据段、代码段</td>
-</tr>
-<tr>
-<td align="center">anon</td>
-<td align="center">父子进程</td>
-<td align="center">堆</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>文件IO</h2>
-<p>文件系统层次架构</p>
-<blockquote>
-<ul>
-<li>VFS Layer</li>
-<li>NFS EXT2 EXT3 NTFS</li>
-<li>Page Cache</li>
-<li>Generic Block Layer</li>
-<li>I/O Scheduler Layer</li>
-<li>Block Device Driver Layer</li>
-<li>Block Device Layer</li>
-</ul>
-</blockquote>
-<p>PageCache起了缓存得作用，采用read ahead机制，如果我们顺序读性能比较好，随机读性能就比较差了。对于写，如果在pagecache中存在，那么直接写PacheCache中的页就可以，否则需要加载该页内容，然后写入PageCache，最后delay write。</p>
-<p>虚拟文件系统为filetab[fd]-&gt;file-&gt;dentry-&gt;inode-&gt;mapping.dentry采用全局hash，查找性能为30～35w/s,100w个文件也为30w/s。</p>
-<p>EXT3添加了日志模式，由高到低为journal、ordered、writeback</p>
-<h2>协议栈</h2>
-<p><img alt="prototcol_stack" src="../../static/system/protocol_stack" /></p>
-<ul>
-<li>
-<p>recv_queue中的包大小，为内核的包大小，而不是ip包大小。</p>
-</li>
-<li>
-<p>如果发出去的包太大，需要修改write_queue和tx_queue两个参数，tx_queue主要是流量控制。</p>
-</li>
-<li>多进程必须在socket后再fork，即使设置了REUSEADDR，从hashtable看出原因。</li>
-<li>net.ipv4.tcp_max_syn_backlog参数决定了SYN_RECV状态队列的数量，一般默认值为512或者1024，即超过这个数量，系统将不再接受新的TCP连接请求.</li>
-<li><a href="http://blog.csdn.net/justlinux2010/article/details/12619761">sync cookie</a>,外网要注意，同一个集线器来的用户，可能导致大量不可以建立链接。</li>
-<li>somaxconn决定了listen监听队列的大小</li>
-<li>select有1024的限制，即使没有达到1024，但是分配的fd大于1024也会有问题。</li>
-<li>epoll多用于单进程多线程</li>
-</ul>
-<h2>时间</h2>
-<ul>
-<li>gettimeofday根据硬件不同性能差距很大</li>
-<li>usleep(1),睡眠不一定是1微妙，有可能是毫秒级的，也和硬件有关。</li>
-</ul>
-<h2>参考文献</h2>
-<p>man 2</p>
-<p>man 7</p>
-<p>ULK</p>
 		</div><!-- /.entry-content -->
 		<div class="comments">
 		<h2>Comments !</h2>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
-			   var disqus_identifier = "linux-kernel-introduce.html";
+			   var disqus_identifier = "distribute-system-terms.html";
 			   (function() {
 				var dsq = document.createElement('script'); 
 				dsq.type = 'text/javascript'; dsq.async = true;
