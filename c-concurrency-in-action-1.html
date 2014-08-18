@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jack's Blog</title>
+    <title>C++并行编程1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -70,7 +70,7 @@
           <div class="nav-collapse">
             <ul class="nav">
 			  <li class="divider-vertical"></li>
-                  <li >
+                  <li class="active">
                     <a href="./category/大数据.html">
 						<i class="icon-folder-open icon-large"></i>大数据
 					</a>
@@ -100,19 +100,93 @@
     <div class="container-fluid">
       <div class="row">
         <div class="span9" id="content">
-<section id="content">
-<h1>Archives for jack's Blog</h1>
+<section id="content">    
+	<article>
+		<header>
+			<h1>
+				<a href=""
+					rel="bookmark" 
+					title="Permalink to C++并行编程1">
+					C++并行编程1 
+				</a>
+ 
+			</h1> 
+		</header>
+		<div class="entry-content">
+		<div class="well">
+<footer class="post-info">
+<span class="label">Date</span>
+<abbr class="published" title="2014-08-19T00:20:00">
+	<i class="icon-calendar"></i>二 19 八月 2014
+</abbr>
+<span class="label">By</span>
+<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
+<span class="label">Category</span>
+<a href="./category/da-shu-ju.html"><i class="icon-folder-open"></i>大数据</a>. 
 
-<dl>
-	<dt>二 19 八月 2014</dt>
-	<dd><a href='c-concurrency-in-action-1.html'>C++并行编程1</a></dd>
-	<dt>三 13 八月 2014</dt>
-	<dd><a href='distribute-system-terms.html'>分布式系统－terms</a></dd>
-	<dt>一 28 七月 2014</dt>
-	<dd><a href='linux-kernel-introduce.html'>Linux内核策略介绍学习笔记</a></dd>
-	<dt>日 27 七月 2014</dt>
-	<dd><a href='my-github-blog-set.html'>个人github blog环境设置</a></dd>
-</dl>
+	
+<span class="label">Tags</span> 
+	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
+</footer><!-- /.post-info -->		</div>
+		<h2>what is concurrency</h2>
+<p>我们可以一边看电视，一边唱歌。人并行非常容易理解，但是计算机呢？是不是我们一边编辑着word文档，一边听着歌，这样计算机就是在并行吗？不一定欧，如果你计算机是单核，就一定不是并行了，而是把你的任务分成你根本感觉不到的任务片，近似在并行执行，其实是在串行执行。如果是双核，也不一定，有可能一个核上同时执行两个任务，也有可能是并行欧，不同核执行不同的任务。</p>
+<p>并行执行有两种实现方法：
+多进程：启动比较复杂并且比较慢，操作系统需要额外的资源来管理进程，但是容易写比线程安全的代码。</p>
+<p>多线程：线程之间更容易通信，启动和通信也比进程开销小。</p>
+<h2>why use concurrency</h2>
+<blockquote>
+<ul>
+<li>拆分任务</li>
+<li>合理利用性能</li>
+</ul>
+</blockquote>
+<p>通常有三种并行的方法：</p>
+<h3>task parallelism</h3>
+<p>把一个任务拆分成不同部分，并行执行</p>
+<h3>data parallelism</h3>
+<p>把数据分成不同部分，线程在不同数据上执行相同操作。</p>
+<h3>embarrassingly parallel</h3>
+<p>算法变为并行执行算法</p>
+<h2>why not use concurrency</h2>
+<blockquote>
+<ul>
+<li>执行任务容易完成，但是线程启动也需要开销</li>
+<li>启动线程太多，容易消耗完内存和地址空间（特别是32位机器），容易消耗完系统资源，比如每个链接建立一个线程，还有切换开销。</li>
+</ul>
+</blockquote>
+<h2>hello world</h2>
+<p>需要在C++11环境下编译。</p>
+<div class="highlight"><pre><span class="vi">#include</span> <span class="o">&lt;</span><span class="nx">iostream</span><span class="o">&gt;</span>
+<span class="vi">#include</span> <span class="o">&lt;</span><span class="k">thread</span><span class="o">&gt;</span>
+
+<span class="bp">void</span> <span class="nx">hello</span><span class="p">()</span>
+<span class="p">{</span>
+     <span class="nx">std</span><span class="p">::</span><span class="nl">cout</span><span class="o">&lt;&lt;</span><span class="s2">&quot;hello world&quot;</span><span class="o">&lt;&lt;</span><span class="nx">std</span><span class="p">::</span><span class="nl">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">int</span> <span class="nx">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">std</span><span class="p">::</span><span class="nl">thread</span> <span class="nb">t</span><span class="p">(</span><span class="nx">hello</span><span class="p">);</span>
+    <span class="nx">t.join</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+		<h2>Comments !</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			   var disqus_identifier = "c-concurrency-in-action-1.html";
+			   (function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://jackblog.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || 
+				 document.getElementsByTagName('body')[0]).appendChild(dsq);
+			  })();
+			</script>
+		</div>
+	</article>
 </section>
         </div><!--/span-->
       

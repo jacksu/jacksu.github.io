@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>jack's Blog</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 13 Aug 2014 11:20:00 +0800</lastBuildDate><item><title>分布式系统－terms</title><link>/distribute-system-terms.html</link><description>&lt;p&gt;Distributed programming is the art of solving the same problem that you can solve on a single computer using multiple computers.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>jack's Blog</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 19 Aug 2014 00:20:00 +0800</lastBuildDate><item><title>C++并行编程1</title><link>/c-concurrency-in-action-1.html</link><description>&lt;h2&gt;what is concurrency&lt;/h2&gt;
+&lt;p&gt;我们可以一边看电视，一边唱歌。人并行非常容易理解，但是计算机呢？是不是我们一边编辑着word文档，一边听着歌，这样计算机就是在并行吗？不一定欧，如果你计算机是单核，就一定不是并行了，而是把你的任务分成你根本感觉不到的任务片，近似在并行执行，其实是在串行执行。如果是双核，也不一定，有可能一个核上同时执行两个任务，也有可能是并行欧，不同核执行不同的任务。&lt;/p&gt;
+&lt;p&gt;并行执行有两种实现方法：
+多进程：启动比较复杂并且比较慢，操作系统需要额外的资源来管理进程，但是容易写比线程安全的代码。&lt;/p&gt;
+&lt;p&gt;多线程：线程之间更容易通信，启动和通信也比进程开销小。&lt;/p&gt;
+&lt;h2&gt;why use concurrency&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;拆分任务&lt;/li&gt;
+&lt;li&gt;合理利用性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;通常有三种并行的方法：&lt;/p&gt;
+&lt;h3&gt;task parallelism&lt;/h3&gt;
+&lt;p&gt;把一个任务拆分成不同部分，并行执行&lt;/p&gt;
+&lt;h3&gt;data parallelism&lt;/h3&gt;
+&lt;p&gt;把数据分成不同部分，线程在不同数据上执行相同操作。&lt;/p&gt;
+&lt;h3&gt;embarrassingly parallel&lt;/h3&gt;
+&lt;p&gt;算法变为并行执行算法&lt;/p&gt;
+&lt;h2&gt;why not use concurrency&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;执行任务容易完成，但是线程启动也需要开销&lt;/li&gt;
+&lt;li&gt;启动线程太多，容易消耗完内存和地址空间（特别是32位机器），容易消耗完系统资源，比如每个链接建立一个线程，还有切换开销。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;hello world&lt;/h2&gt;
+&lt;p&gt;需要在C++11环境下编译。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="vi"&gt;#include&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;iostream&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="vi"&gt;#include&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;thread&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="bp"&gt;void&lt;/span&gt; &lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+     &lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;cout&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;hello world&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;int&lt;/span&gt; &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;thread&lt;/span&gt; &lt;span class="nb"&gt;t&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;t.join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jacksu</dc:creator><pubDate>Tue, 19 Aug 2014 00:20:00 +0800</pubDate><guid>tag:,2014-08-19:c-concurrency-in-action-1.html</guid><category>C++</category></item><item><title>分布式系统－terms</title><link>/distribute-system-terms.html</link><description>&lt;p&gt;Distributed programming is the art of solving the same problem that you can solve on a single computer using multiple computers.&lt;/p&gt;
 &lt;h2&gt;Scalability&lt;/h2&gt;
 &lt;p&gt;处理每件事情都需要注意它的规模，如果规模达到一定程度，处理的难度明显加强。例如你可以计算出一个房间中的人数，但是很难计算出一个国家的人数。在一个可扩展的分布式系统中，系统从小变大，但是相关性能没有变差。&lt;/p&gt;
 &lt;p&gt;比如在单机文件系统上加 RAID5 做数据冗余，来解决单机文件系统的可靠性问题。假设 RAID5 的数据修复时间是1天（实际上往往做不到，尤其是业务系统本身压力比较大的情况下，留给 RAID 修复用的磁盘读写带宽很有限），这种方案单机的可靠性大概是100年丢失一次数据（即可靠性是2个9）。看起来尚可？但是你得小心两种情况。一种是你的集群规模变大，你仍然沿用这个土方法，比如你现在有 100 台这样的机器，那么就会变成1年就丢失一次数据。另一种情况是如果实际数据修复时间是 3 天，那么单机的可靠性就直降至4年丢失一次数据，100台就会是15天丢失一次数据。这个数字显然无法让人接受。&lt;/p&gt;
@@ -70,8 +112,8 @@
 &lt;p&gt;在数据被写入时，什么可以保证耐久性？如果让系统运行一个计算，如何迅速返回结果？当组件发生故障，执行取出操作，什么样的影响将在在系统上？&lt;/p&gt;
 &lt;h2&gt;设计技术：partition and replicate&lt;/h2&gt;
 &lt;p&gt;如果要把数据分布在不同节点，那么上面两个技术非常关键。数据可以被分割在多个节点（partition），以允许更多的并行处理。也可以被复制或缓存在不同的节点上，以减少客户端和服务器之间距离以及更大的容错性（replicate）
-&lt;img alt="partition" src="http://book.mixu.net/distsys/images/part-repl.png" /&gt;
-partitioning是把数据分成相互独立的数据集，这样可以避免数据的增长带来的影响。partitioning是通过限制被检查数据集的大小和定位相关数据在相同partition来提高性能的（如一个数据一分钟的记录，那么这个数据分布在一台机器和多台机器性能是截然不同的）。容许partition独立失败，来挺高可用性。在不可用情况下，容易更多节点失败。&lt;/p&gt;
+&lt;img alt="partition" src="http://book.mixu.net/distsys/images/part-repl.png" /&gt;&lt;/p&gt;
+&lt;p&gt;partitioning是把数据分成相互独立的数据集，这样可以避免数据的增长带来的影响。partitioning是通过限制被检查数据集的大小和定位相关数据在相同partition来提高性能的（如一个数据一分钟的记录，那么这个数据分布在一台机器和多台机器性能是截然不同的）。容许partition独立失败，来挺高可用性。在不可用情况下，容易更多节点失败。&lt;/p&gt;
 &lt;p&gt;replication可以通过复制数据集，提高计算和带宽能力。可以提高可用性，在不可用情况下，容易更多节点失败。当然replication又会带来一致性问题，后面再讨论一致性的问题。&lt;/p&gt;
 &lt;h2&gt;参考文献：&lt;/h2&gt;
 &lt;blockquote&gt;

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="/" rel="alternate"></link><link href="/feeds/c.atom.xml" rel="self"></link><id>/</id><updated>2014-08-19T00:20:00+08:00</updated><entry><title>C++并行编程1</title><link href="/c-concurrency-in-action-1.html" rel="alternate"></link><updated>2014-08-19T00:20:00+08:00</updated><author><name>jacksu</name></author><id>tag:,2014-08-19:c-concurrency-in-action-1.html</id><summary type="html">&lt;h2&gt;what is concurrency&lt;/h2&gt;
+&lt;p&gt;我们可以一边看电视，一边唱歌。人并行非常容易理解，但是计算机呢？是不是我们一边编辑着word文档，一边听着歌，这样计算机就是在并行吗？不一定欧，如果你计算机是单核，就一定不是并行了，而是把你的任务分成你根本感觉不到的任务片，近似在并行执行，其实是在串行执行。如果是双核，也不一定，有可能一个核上同时执行两个任务，也有可能是并行欧，不同核执行不同的任务。&lt;/p&gt;
+&lt;p&gt;并行执行有两种实现方法：
+多进程：启动比较复杂并且比较慢，操作系统需要额外的资源来管理进程，但是容易写比线程安全的代码。&lt;/p&gt;
+&lt;p&gt;多线程：线程之间更容易通信，启动和通信也比进程开销小。&lt;/p&gt;
+&lt;h2&gt;why use concurrency&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;拆分任务&lt;/li&gt;
+&lt;li&gt;合理利用性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;通常有三种并行的方法：&lt;/p&gt;
+&lt;h3&gt;task parallelism&lt;/h3&gt;
+&lt;p&gt;把一个任务拆分成不同部分，并行执行&lt;/p&gt;
+&lt;h3&gt;data parallelism&lt;/h3&gt;
+&lt;p&gt;把数据分成不同部分，线程在不同数据上执行相同操作。&lt;/p&gt;
+&lt;h3&gt;embarrassingly parallel&lt;/h3&gt;
+&lt;p&gt;算法变为并行执行算法&lt;/p&gt;
+&lt;h2&gt;why not use concurrency&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;执行任务容易完成，但是线程启动也需要开销&lt;/li&gt;
+&lt;li&gt;启动线程太多，容易消耗完内存和地址空间（特别是32位机器），容易消耗完系统资源，比如每个链接建立一个线程，还有切换开销。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;hello world&lt;/h2&gt;
+&lt;p&gt;需要在C++11环境下编译。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="vi"&gt;#include&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;iostream&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="vi"&gt;#include&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;thread&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="bp"&gt;void&lt;/span&gt; &lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+     &lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;cout&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;hello world&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;endl&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;int&lt;/span&gt; &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;std&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nl"&gt;thread&lt;/span&gt; &lt;span class="nb"&gt;t&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;t.join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="C++"></category></entry></feed>
