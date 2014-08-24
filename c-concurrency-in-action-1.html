@@ -70,14 +70,14 @@
           <div class="nav-collapse">
             <ul class="nav">
 			  <li class="divider-vertical"></li>
+                  <li >
+                    <a href="./category/Config.html">
+						<i class="icon-folder-open icon-large"></i>Config
+					</a>
+                  </li>
                   <li class="active">
                     <a href="./category/大数据.html">
 						<i class="icon-folder-open icon-large"></i>大数据
-					</a>
-                  </li>
-                  <li >
-                    <a href="./category/环境配置.html">
-						<i class="icon-folder-open icon-large"></i>环境配置
 					</a>
                   </li>
                   <li >
@@ -156,21 +156,24 @@
 </blockquote>
 <h2>hello world</h2>
 <p>需要在C++11环境下编译。</p>
-<div class="highlight"><pre><span class="vi">#include</span> <span class="o">&lt;</span><span class="nx">iostream</span><span class="o">&gt;</span>
-<span class="vi">#include</span> <span class="o">&lt;</span><span class="k">thread</span><span class="o">&gt;</span>
-
-<span class="bp">void</span> <span class="nx">hello</span><span class="p">()</span>
+<p>```
+    #include <iostream>
+    #include <thread></p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">hello</span><span class="p">()</span>
 <span class="p">{</span>
-     <span class="nx">std</span><span class="p">::</span><span class="nl">cout</span><span class="o">&lt;&lt;</span><span class="s2">&quot;hello world&quot;</span><span class="o">&lt;&lt;</span><span class="nx">std</span><span class="p">::</span><span class="nl">endl</span><span class="p">;</span>
+     <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;hello world&quot;</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nx">int</span> <span class="nx">main</span><span class="p">()</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
-    <span class="nx">std</span><span class="p">::</span><span class="nl">thread</span> <span class="nb">t</span><span class="p">(</span><span class="nx">hello</span><span class="p">);</span>
-    <span class="nx">t.join</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">hello</span><span class="p">);</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
+
+
+<p>```</p>
 		</div><!-- /.entry-content -->
 		<div class="comments">
 		<h2>Comments !</h2>
@@ -202,13 +205,13 @@
 
 <li class="nav-header"><h4><i class="icon-folder-close icon-large"></i>Categories</h4></li>
 <li>
-<a href="./category/大数据.html">
-    <i class="icon-folder-open icon-large"></i>大数据
+<a href="./category/Config.html">
+    <i class="icon-folder-open icon-large"></i>Config
 </a>
 </li>
 <li>
-<a href="./category/环境配置.html">
-    <i class="icon-folder-open icon-large"></i>环境配置
+<a href="./category/大数据.html">
+    <i class="icon-folder-open icon-large"></i>大数据
 </a>
 </li>
 <li>
@@ -219,13 +222,13 @@
 
 <li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
 <li class="tag-4">
-    <a href="./tag/C++.html">
-        <i class="icon-tag icon-large"></i>C++
-    </a>
-</li>
-<li class="tag-4">
     <a href="./tag/github.html">
         <i class="icon-tag icon-large"></i>github
+    </a>
+</li>
+<li class="tag-1">
+    <a href="./tag/C++.html">
+        <i class="icon-tag icon-large"></i>C++
     </a>
 </li>
 <li class="tag-4">

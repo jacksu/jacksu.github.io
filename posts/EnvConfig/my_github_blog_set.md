@@ -1,7 +1,7 @@
 Title: 个人github blog环境设置
 Date: 2014-7-27 00:20
 Modified: 2014-7-27 00:20
-Category: 环境配置
+Category: Config
 Tags: github
 Slug: my-github-blog-set
 Author: jacksu

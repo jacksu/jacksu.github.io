@@ -40,6 +40,7 @@ Summary:在C++11中的标准库中引入了线程库，这样就可以方便我�
 
 需要在C++11环境下编译。
 
+```
 	#include <iostream>
   	#include <thread>
   
@@ -54,3 +55,4 @@ Summary:在C++11中的标准库中引入了线程库，这样就可以方便我�
  	    t.join();
  	    return 0;
  	}
+ ```
