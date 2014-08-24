@@ -1,7 +1,7 @@
 Title: 分布式系统－terms
 Date: 2014-8-13 11:20
 Modified: 2014-8-13 11:20
-Category: 大数据
+Category: bigdata
 Tags: distribute system
 Slug: distribute-system-terms
 Author: jacksu

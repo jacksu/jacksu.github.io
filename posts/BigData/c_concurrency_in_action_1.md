@@ -1,7 +1,7 @@
 Title: C++并行编程1
 Date: 2014-8-19 00:20
 Modified: 2014-8-19 00:20
-Category: 大数据
+Category: bigdata
 Tags: C++
 Slug: c-concurrency-in-action-1
 Author: jacksu

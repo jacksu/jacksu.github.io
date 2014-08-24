@@ -184,4 +184,28 @@
 &lt;p&gt;PageCache起了缓存得作用，采用read ahead机制，如果我们顺序读性能比较好，随机读性能就比较差了。对于写，如果在pagecache中存在，那么直接写PacheCache中的页就可以，否则需要加载该页内容，然后写入PageCache，最后delay write。&lt;/p&gt;
 &lt;p&gt;虚拟文件系统为filetab[fd]-&amp;gt;file-&amp;gt;dentry-&amp;gt;inode-&amp;gt;mapping.dentry采用全局hash，查找性能为30～35w/s,100w个文件也为30w/s。&lt;/p&gt;
 &lt;p&gt;EXT3添加了日志模式，由高到低为journal、ordered、writeback&lt;/p&gt;
-&lt;h2&gt;协议栈&lt;/h2&gt;</summary><category term="linux"></category></entry></feed>
+&lt;h2&gt;协议栈&lt;/h2&gt;
+&lt;p&gt;&lt;img alt="prototcol_stack" src="../../static/system/protocol_stack" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;recv_queue中的包大小，为内核的包大小，而不是ip包大小。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果发出去的包太大，需要修改write_queue和tx_queue两个参数，tx_queue主要是流量控制。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;多进程必须在socket后再fork，即使设置了REUSEADDR，从hashtable看出原因。&lt;/li&gt;
+&lt;li&gt;net.ipv4.tcp_max_syn_backlog参数决定了SYN_RECV状态队列的数量，一般默认值为512或者1024，即超过这个数量，系统将不再接受新的TCP连接请求.&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://blog.csdn.net/justlinux2010/article/details/12619761"&gt;sync cookie&lt;/a&gt;,外网要注意，同一个集线器来的用户，可能导致大量不可以建立链接。&lt;/li&gt;
+&lt;li&gt;somaxconn决定了listen监听队列的大小&lt;/li&gt;
+&lt;li&gt;select有1024的限制，即使没有达到1024，但是分配的fd大于1024也会有问题。&lt;/li&gt;
+&lt;li&gt;epoll多用于单进程多线程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;时间&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;gettimeofday根据硬件不同性能差距很大&lt;/li&gt;
+&lt;li&gt;usleep(1),睡眠不一定是1微妙，有可能是毫秒级的，也和硬件有关。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;参考文献&lt;/h2&gt;
+&lt;p&gt;man 2&lt;/p&gt;
+&lt;p&gt;man 7&lt;/p&gt;
+&lt;p&gt;ULK&lt;/p&gt;</summary><category term="linux"></category></entry></feed>

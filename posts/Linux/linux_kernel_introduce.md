@@ -1,7 +1,7 @@
 Title: Linux内核策略介绍学习笔记
 Date: 2014-7-28 20:20
 Modified: 2014-7-28 20:20
-Category: 系统
+Category: system
 Tags: linux
 Slug: linux-kernel-introduce
 Author: jacksu
