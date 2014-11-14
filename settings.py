@@ -67,6 +67,7 @@ document.write("<p style='text-align: center'><strong><font style='color:black;f
 <div class="textwidget">
 <a href="http://x-wei.github.com/google_youku_host_20120706.html">[更新]访问google服务和优酷去广告功能的host列表</a><br>
 <a href="https://jacksu.github.io/my-github-blog-set.html">用pelican在github上创建自己的博客!</a><br>
+<a href="https://jacksu.github.io/i-love-you.html">我们的故事</a><br>
 </div></li>
 
 <br>
@@ -75,6 +76,10 @@ document.write("<p style='text-align: center'><strong><font style='color:black;f
 <div class="textwidget">
 <script type="text/javascript" src="http://jf.revolvermaps.com/2/1.js?i=59olkba9w7e&amp;s=220&amp;m=3&amp;v=false&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
 </div></li>
+<!-- UJian Button BEGIN -->
+<script type="text/javascript" src="http://v1.ujian.cc/code/ujian.js?type=slide&fade=1"></script>
+<a href="http://www.ujian.cc" style="border:0;"><img src="http://img.ujian.cc/pixel.png" alt="友荐云推荐" style="border:0;padding:0;margin:0;" /></a>
+<!-- UJian Button END -->
 """
 
 #~ <br>

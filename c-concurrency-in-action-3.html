@@ -128,7 +128,209 @@
 <span class="label">Tags</span> 
 	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
 </footer><!-- /.post-info -->		</div>
-		
+		<h2>传参数给线程</h2>
+<p>线程参数默认是传值，copy进内存。下面看看几种错误的用法。</p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">oops</span><span class="p">(</span><span class="kt">int</span> <span class="n">some_param</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+    <span class="n">sprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="s">&quot;%i&quot;</span><span class="p">,</span><span class="n">some_param</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">buffer</span><span class="p">);</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">detach</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>会隐式把buffer转化为string，但是子线程先copy buffer，运行了才隐式转，有可能还没有转化，主线程就退出了，那么行为就未定义。那么我们可以修改为：</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">buffer</span><span class="p">));</span>
+</pre></div>
+
+
+<p>别忘了线程默认是传值。</p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">update_data_for_widget</span><span class="p">(</span><span class="n">widget_id</span> <span class="n">w</span><span class="p">,</span><span class="n">widget_data</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">oops_again</span><span class="p">(</span><span class="n">widget_id</span> <span class="n">w</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">widget_data</span> <span class="n">data</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">update_data_for_widget</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">data</span><span class="p">);</span>
+    <span class="n">display_status</span><span class="p">();</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">process_widget_data</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>data是不会更新的，这样传给process_widget_data的还是原始值。应该这样使用：</p>
+<div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">update_data_for_widget</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+</pre></div>
+
+
+<p>如果想传给一个类中函数，可以这样：</p>
+<div class="highlight"><pre><span class="n">class</span> <span class="n">X</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">do_lengthy_work</span><span class="p">();</span>
+<span class="p">};</span>
+<span class="n">X</span> <span class="n">my_x</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="o">&amp;</span><span class="n">X</span><span class="o">::</span><span class="n">do_lengthy_work</span><span class="p">,</span><span class="o">&amp;</span><span class="n">my_x</span><span class="p">);</span>
+</pre></div>
+
+
+<h2>所有权转换</h2>
+<p>thread是movable的，但不是copyable的，和ifstream等类似。（movable做一下简单解释，就是调用std:move()后，原来的对象为空）。如果我们想实现子线程等待，而不是有父线程join（<code>其实是没有父子关系的，完全是平等的，只是把最开始的线程习惯称为父线程</code>）。</p>
+<div class="highlight"><pre><span class="mi">1</span> <span class="k">void</span> <span class="nx">some_function</span><span class="p">();</span>
+<span class="mi">2</span> <span class="k">void</span> <span class="nx">some_other_function</span><span class="p">();</span>
+<span class="mi">3</span> <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t1</span><span class="p">(</span><span class="nx">some_function</span><span class="p">);</span>
+<span class="mi">4</span> <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t2</span><span class="o">=</span><span class="nx">std</span><span class="o">::</span><span class="nx">move</span><span class="p">(</span><span class="nx">t1</span><span class="p">);</span>
+<span class="mi">5</span> <span class="nx">t1</span><span class="o">=</span><span class="nx">std</span><span class="o">::</span><span class="nx">thread</span><span class="p">(</span><span class="nx">some_other_function</span><span class="p">);</span>
+<span class="mi">6</span> <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t3</span><span class="p">;</span>
+<span class="mi">7</span> <span class="nx">t3</span><span class="o">=</span><span class="nx">std</span><span class="o">::</span><span class="nx">move</span><span class="p">(</span><span class="nx">t2</span><span class="p">);</span>
+<span class="mi">8</span> <span class="nx">t1</span><span class="o">=</span><span class="nx">std</span><span class="o">::</span><span class="nx">move</span><span class="p">(</span><span class="nx">t3</span><span class="p">);</span>
+</pre></div>
+
+
+<p>第4行后，t2执行some_function，t1没有执行的线程。5行后，t1执行some_other_function，但是第5行没有显式调用std::move，是因为t1是临时变量，moving是原子的（<code>std::move()也是原子的</code>）。第7行后，t3执行some_function。第8行后，t1执行std::terminate，然后执行some_function。</p>
+<p>线程的moving特性，是线程可以作为函数返回值或函数参数。如下：</p>
+<div class="highlight"><pre><span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">f</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">void</span> <span class="nx">some_function</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span><span class="p">(</span><span class="nx">some_function</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">g</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">void</span> <span class="nx">some_other_function</span><span class="p">(</span><span class="kr">int</span><span class="p">);</span>
+    <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t</span><span class="p">(</span><span class="nx">some_other_function</span><span class="p">,</span><span class="mi">42</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span class="k">void</span> <span class="nx">f</span><span class="p">(</span><span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t</span><span class="p">);</span>
+<span class="k">void</span> <span class="nx">g</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">void</span> <span class="nx">some_function</span><span class="p">();</span>
+    <span class="nx">f</span><span class="p">(</span><span class="nx">std</span><span class="o">::</span><span class="nx">thread</span><span class="p">(</span><span class="nx">some_function</span><span class="p">));</span>
+    <span class="nx">std</span><span class="o">::</span><span class="nx">thread</span> <span class="nx">t</span><span class="p">(</span><span class="nx">some_function</span><span class="p">);</span>
+    <span class="nx">f</span><span class="p">(</span><span class="nx">std</span><span class="o">::</span><span class="nx">move</span><span class="p">(</span><span class="nx">t</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>前面的thread_guard可以用下面的方法实现。</p>
+<div class="highlight"><pre><span class="n">class</span> <span class="n">thread_guard</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="n">explicit</span> <span class="nf">thread_guard</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t_</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">t</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t_</span><span class="p">)</span>
+    <span class="p">{}</span>
+    <span class="o">~</span><span class="n">thread_guard</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">thread_guard</span><span class="p">(</span><span class="n">thread_guard</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span><span class="o">=</span><span class="n">delete</span><span class="p">;</span>
+    <span class="n">thread_guard</span><span class="o">&amp;</span> <span class="n">operator</span><span class="o">=</span><span class="p">(</span><span class="n">thread_guard</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span><span class="o">=</span><span class="n">delete</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span class="n">thread_guard</span> <span class="nf">g</span><span class="p">(</span><span class="n">my_thread</span><span class="p">);</span>      
+<span class="n">do_something_in_current_thread</span><span class="p">();</span>
+</pre></div>
+
+
+<h2>选择运行时的线程数</h2>
+<p>std::thread::hardware_ concurrency()这个函数可能是0，也可能是计算机核数。指示真正并行执行的线程数。</p>
+<div class="highlight"><pre><span class="c1">//</span>
+<span class="c1">//  choosing_the_num_of_thread.cpp</span>
+<span class="c1">//  cpp_concurrency</span>
+<span class="c1">//</span>
+<span class="c1">//  Created by jack on 14-8-24.</span>
+<span class="c1">//  Copyright (c) 2014年 jack. All rights reserved.</span>
+<span class="c1">//</span>
+
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">thread</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">numeric</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">algorithm</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">functional</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">vector</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">iostream</span><span class="o">&gt;</span>
+
+<span class="n">template</span><span class="o">&lt;</span><span class="n">typename</span> <span class="n">Iterator</span><span class="p">,</span><span class="n">typename</span> <span class="no">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">accumulate_block</span>
+<span class="p">{</span>
+    <span class="k">void</span> <span class="n">operator</span><span class="p">()(</span><span class="n">Iterator</span> <span class="n">first</span><span class="p">,</span><span class="n">Iterator</span> <span class="n">last</span><span class="p">,</span><span class="no">T</span><span class="o">&amp;</span> <span class="n">result</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">result</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">accumulate</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">last</span><span class="p">,</span><span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">template</span><span class="o">&lt;</span><span class="n">typename</span> <span class="n">Iterator</span><span class="p">,</span><span class="n">typename</span> <span class="no">T</span><span class="o">&gt;</span>
+<span class="no">T</span> <span class="n">parallel_accumulate</span><span class="p">(</span><span class="n">Iterator</span> <span class="n">first</span><span class="p">,</span><span class="n">Iterator</span> <span class="n">last</span><span class="p">,</span><span class="no">T</span> <span class="n">init</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">length</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">distance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">last</span><span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">init</span><span class="p">;</span>
+
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">min_per_thread</span><span class="o">=</span><span class="mh">25</span><span class="p">;</span>
+    <span class="c1">//最大线程数</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">max_threads</span><span class="o">=</span>
+    <span class="p">(</span><span class="n">length</span><span class="o">+</span><span class="n">min_per_thread</span><span class="o">-</span><span class="mh">1</span><span class="p">)</span><span class="o">/</span><span class="n">min_per_thread</span><span class="p">;</span>
+
+    <span class="c1">//确定计算机核数</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">hardware_threads</span><span class="o">=</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">thread</span><span class="o">::</span><span class="n">hardware_concurrency</span><span class="p">();</span>
+
+    <span class="c1">//如果hardware_concurrency返回为0，我们取为2，不想运行太多的线程，</span>
+    <span class="c1">//线程太多需要上下文切换，不能发挥更好的性能，太少就成为单线程了。线程数</span>
+    <span class="c1">//不希望多于核数，不然也有上下文切换。</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">num_threads</span><span class="o">=</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">hardware_threads</span><span class="o">!=</span><span class="mh">0</span><span class="o">?</span><span class="nl">hardware_threads:</span><span class="mh">2</span><span class="p">,</span><span class="n">max_threads</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;hardware_threads:&quot;</span><span class="o">&lt;&lt;</span><span class="n">hardware_threads</span><span class="o">&lt;&lt;</span><span class="s">&quot; num_threads:&quot;</span><span class="o">&lt;&lt;</span><span class="n">num_threads</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+    <span class="c1">//每个线程处理的长度</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">block_size</span><span class="o">=</span><span class="n">length</span><span class="o">/</span><span class="n">num_threads</span><span class="p">;</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">results</span><span class="p">(</span><span class="n">num_threads</span><span class="p">);</span>
+    <span class="c1">//还有个父线程</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">thread</span><span class="o">&gt;</span>  <span class="n">threads</span><span class="p">(</span><span class="n">num_threads</span><span class="o">-</span><span class="mh">1</span><span class="p">);</span>
+
+    <span class="n">Iterator</span> <span class="n">block_start</span><span class="o">=</span><span class="n">first</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">unsigned</span> <span class="n">long</span> <span class="n">i</span><span class="o">=</span><span class="mh">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="n">num_threads</span><span class="o">-</span><span class="mh">1</span><span class="p">);</span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Iterator</span> <span class="n">block_end</span><span class="o">=</span><span class="n">block_start</span><span class="p">;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">advance</span><span class="p">(</span><span class="n">block_end</span><span class="p">,</span><span class="n">block_size</span><span class="p">);</span>
+        <span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">thread</span><span class="p">(</span><span class="n">accumulate_block</span><span class="o">&lt;</span><span class="n">Iterator</span><span class="p">,</span><span class="no">T</span><span class="o">&gt;</span><span class="p">(),</span>
+                               <span class="n">block_start</span><span class="p">,</span><span class="n">block_end</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="k">ref</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+        <span class="n">block_start</span><span class="o">=</span><span class="n">block_end</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">accumulate_block</span><span class="o">&lt;</span><span class="n">Iterator</span><span class="p">,</span><span class="no">T</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">block_start</span><span class="p">,</span><span class="n">last</span><span class="p">,</span><span class="n">results</span><span class="p">[</span><span class="n">num_threads</span><span class="o">-</span><span class="mh">1</span><span class="p">]);</span>
+
+    <span class="c1">//等待每个线程结束</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">threads</span><span class="p">.</span><span class="k">begin</span><span class="p">(),</span><span class="n">threads</span><span class="p">.</span><span class="k">end</span><span class="p">(),</span>
+                  <span class="n">std</span><span class="o">::</span><span class="n">mem_fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">thread</span><span class="o">::</span><span class="k">join</span><span class="p">));</span>
+    <span class="c1">//把每个线程计算结果合起来</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">accumulate</span><span class="p">(</span><span class="n">results</span><span class="p">.</span><span class="k">begin</span><span class="p">(),</span><span class="n">results</span><span class="p">.</span><span class="k">end</span><span class="p">(),</span><span class="n">init</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span> <span class="n">vi</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">int</span> <span class="n">i</span><span class="o">=</span><span class="mh">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mh">50</span><span class="p">;</span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">vi</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mh">10</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">int</span> <span class="n">sum</span><span class="o">=</span><span class="n">parallel_accumulate</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;::</span><span class="n">iterator</span><span class="p">,</span><span class="k">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">vi</span><span class="p">.</span><span class="k">begin</span><span class="p">(),</span><span class="n">vi</span><span class="p">.</span><span class="k">end</span><span class="p">(),</span><span class="mh">5</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;sum=&quot;</span><span class="o">&lt;&lt;</span><span class="n">sum</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>线程标识符</h2>
+<p>std::thread::id 是可copy和比较的。可以通过std::this_thread::get_id()获得。</p>
 		</div><!-- /.entry-content -->
 		<div class="comments">
 		<h2>Comments !</h2>
@@ -176,9 +378,9 @@
 </li>
 
 <li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
-<li class="tag-1">
-    <a href="./tag/C++.html">
-        <i class="icon-tag icon-large"></i>C++
+<li class="tag-4">
+    <a href="./tag/distribute system.html">
+        <i class="icon-tag icon-large"></i>distribute system
     </a>
 </li>
 <li class="tag-4">
@@ -187,13 +389,13 @@
     </a>
 </li>
 <li class="tag-4">
-    <a href="./tag/distribute system.html">
-        <i class="icon-tag icon-large"></i>distribute system
-    </a>
-</li>
-<li class="tag-4">
     <a href="./tag/github.html">
         <i class="icon-tag icon-large"></i>github
+    </a>
+</li>
+<li class="tag-1">
+    <a href="./tag/C++.html">
+        <i class="icon-tag icon-large"></i>C++
     </a>
 </li>
 
@@ -228,6 +430,7 @@ document.write("<p style='text-align: center'><strong><font style='color:black;f
 <div class="textwidget">
 <a href="http://x-wei.github.com/google_youku_host_20120706.html">[更新]访问google服务和优酷去广告功能的host列表</a><br>
 <a href="https://jacksu.github.io/my-github-blog-set.html">用pelican在github上创建自己的博客!</a><br>
+<a href="https://jacksu.github.io/i-love-you.html">我们的故事</a><br>
 </div></li>
 
 <br>
@@ -236,6 +439,10 @@ document.write("<p style='text-align: center'><strong><font style='color:black;f
 <div class="textwidget">
 <script type="text/javascript" src="http://jf.revolvermaps.com/2/1.js?i=59olkba9w7e&amp;s=220&amp;m=3&amp;v=false&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
 </div></li>
+<!-- UJian Button BEGIN -->
+<script type="text/javascript" src="http://v1.ujian.cc/code/ujian.js?type=slide&fade=1"></script>
+<a href="http://www.ujian.cc" style="border:0;"><img src="http://img.ujian.cc/pixel.png" alt="友荐云推荐" style="border:0;padding:0;margin:0;" /></a>
+<!-- UJian Button END -->
 
 </ul>        </div><!--/.well -->
 

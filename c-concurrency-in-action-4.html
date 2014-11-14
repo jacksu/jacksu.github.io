@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>C++并行编程4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link rel="stylesheet" href="./theme/css/bootstrap.css" type="text/css" />
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+	
+	.tag-1 {
+		font-size: 13pt;
+	}
+	
+	.tag-2 {
+		font-size: 10pt;
+	}
+	
+	.tag-2 {
+		font-size: 8pt;
+	}
+
+	.tag-4 {
+		font-size: 6pt;
+	}
+	
+    </style>
+    <link href="./theme/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="./theme/css/font-awesome.css" rel="stylesheet">
+	
+    <link href="./theme/css/pygments.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="./theme/images/favicon.ico">
+    <link rel="apple-touch-icon" href="./theme/images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./theme/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./theme/images/apple-touch-icon-114x114.png">
+
+    <link href="./" type="application/atom+xml" rel="alternate" title="jack's Blog ATOM Feed" />
+    <link href="./feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="jack's Blog RSS Feed" />
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="./index.html">jack's Blog </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+			  <li class="divider-vertical"></li>
+                  <li class="active">
+                    <a href="./category/bigdata.html">
+						<i class="icon-folder-open icon-large"></i>bigdata
+					</a>
+                  </li>
+                  <li >
+                    <a href="./category/envconfig.html">
+						<i class="icon-folder-open icon-large"></i>envconfig
+					</a>
+                  </li>
+                  <li >
+                    <a href="./category/system.html">
+						<i class="icon-folder-open icon-large"></i>system
+					</a>
+                  </li>
+			  
+			  <ul class="nav pull-right">
+				<li><a href="./archives.html"><i class="icon-th-list"></i>Archives</a></li>
+			  </ul>
+			  
+            </ul>
+            <!--<p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>-->
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="span9" id="content">
+<section id="content">    
+	<article>
+		<header>
+			<h1>
+				<a href=""
+					rel="bookmark" 
+					title="Permalink to C++并行编程4">
+					C++并行编程4 
+				</a>
+ 
+			</h1> 
+		</header>
+		<div class="entry-content">
+		<div class="well">
+<footer class="post-info">
+<span class="label">Date</span>
+<abbr class="published" title="2014-08-25T23:20:00">
+	<i class="icon-calendar"></i>一 25 八月 2014
+</abbr>
+<span class="label">By</span>
+<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
+<span class="label">Category</span>
+<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
+
+	
+<span class="label">Tags</span> 
+	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
+</footer><!-- /.post-info -->		</div>
+		<h2>共享数据的问题</h2>
+<p>所有问题都是由<em>共享数据更新</em>导致的，如果数据是只读的话，一个线程的读取，是不会影响其他线程的读取的。</p>
+<h3>invariants</h3>
+<p>为了更好的理解代码，引入了invariants的概念。比如一个列表的元素个数，这个invariants，经常在更新列表中多于一个元素时打破。再如双向列表，删除一个元素，执行完<code>node-&gt;prev-&gt;next=node-&gt;next;</code>后，如果有另外一个线程读取，从左到右，那么就跳过该node，如果从右到左，还可以读到该node，那么就破坏了invariants，执行完<code>node-&gt;next-&gt;prev=node-&gt;prev</code>,才正常。</p>
+<h3>race conditions</h3>
+<p>假设你买一张电影票去看电影，售票员有很多，同时在买票。你得到的座位必须看是否有人先比你预定。这就出现了race condition。race condition就是最后的结果依赖多个线程的执行顺序。race condition导致invariant破坏了，通常是有问题的，比如上面提到的双向列表中节点的删除。</p>
+<h3>Avoiding problematic race conditions</h3>
+<p>避免race conditions导致的问题，通常有三种做法：</p>
+<ul>
+<li>
+<blockquote>
+<p>protection mechanism</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>lock-free programming</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>software transactional memory</p>
+</blockquote>
+</li>
+</ul>
+<h2>mutexes保护数据共享</h2>
+<p>不要传输一个指针或应用到锁可以保护的范围外，即不要作为函数返回值，不要存储在外部可见的空间中，不要作为用户函数的参数。如下面就是不安全的。</p>
+<div class="highlight"><pre><span class="vi">#include</span> <span class="o">&lt;</span><span class="nx">mutex</span><span class="o">&gt;</span>
+
+<span class="nb">class</span> <span class="nx">some_data</span>
+<span class="p">{</span>
+    <span class="nx">int</span> <span class="nx">a</span><span class="p">;</span>
+    <span class="nx">std</span><span class="p">::</span><span class="nl">string</span> <span class="nx">b</span><span class="p">;</span>
+<span class="k">public</span><span class="p">:</span>
+    <span class="bp">void</span> <span class="nx">do_something</span><span class="p">()</span>
+    <span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="nb">class</span> <span class="nx">data_wrapper</span>
+<span class="p">{</span>
+<span class="k">private</span><span class="p">:</span>
+    <span class="nx">some_data</span> <span class="kd">data</span><span class="p">;</span>
+    <span class="nx">std</span><span class="p">::</span><span class="nl">mutex</span> <span class="nx">m</span><span class="p">;</span>
+<span class="k">public</span><span class="p">:</span>
+    <span class="nx">template</span><span class="o">&lt;</span><span class="nb">typename</span> <span class="nx">Function</span><span class="o">&gt;</span>
+    <span class="bp">void</span> <span class="nx">process_data</span><span class="p">(</span><span class="nx">Function</span> <span class="nx">func</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nx">std</span><span class="p">::</span><span class="nl">lock_guard</span><span class="o">&lt;</span><span class="nx">std</span><span class="p">::</span><span class="nl">mutex</span><span class="o">&gt;</span> <span class="nx">l</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+        <span class="nx">func</span><span class="p">(</span><span class="kd">data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">some_data</span><span class="o">*</span> <span class="nx">unprotected</span><span class="p">;</span>
+
+<span class="bp">void</span> <span class="nx">malicious_function</span><span class="p">(</span><span class="nx">some_data</span><span class="o">&amp;</span> <span class="nx">protected_data</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">unprotected</span><span class="o">=&amp;</span><span class="nx">protected_data</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">data_wrapper</span> <span class="nx">x</span><span class="p">;</span>
+
+<span class="bp">void</span> <span class="nb">foo</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nx">x.process_data</span><span class="p">(</span><span class="nx">malicious_function</span><span class="p">);</span>
+    <span class="nx">unprotected</span><span class="o">-&gt;</span><span class="nx">do_something</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">int</span> <span class="nx">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nb">foo</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>消除接口中race conditions的方法，可供选择的有三种：</p>
+<ul>
+<li>
+<blockquote>
+<p>传输引用</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>拷贝构造函数和move构造函数可以throw异常</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>返回指针指向poped项</p>
+</blockquote>
+</li>
+</ul>
+<p>根据上面的方法构造线程安全的stack。如下：</p>
+<div class="highlight"><pre><span class="c1">//</span>
+<span class="c1">//  thread_safe_stack.cpp</span>
+<span class="c1">//  cpp_concurrency</span>
+<span class="c1">//</span>
+<span class="c1">//  Created by jack on 14-8-31.</span>
+<span class="c1">//  Copyright (c) 2014年 jack. All rights reserved.</span>
+<span class="c1">//</span>
+
+<span class="p">#</span><span class="k">include</span> <span class="s">&quot;thread_safe_stack.h&quot;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">exception</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">stack</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">mutex</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">memory</span><span class="o">&gt;</span>
+
+<span class="k">struct</span> <span class="nl">empty_stack:</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="n">char</span><span class="o">*</span> <span class="n">what</span><span class="p">()</span> <span class="k">const</span> <span class="n">throw</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;empty stack&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="n">template</span><span class="o">&lt;</span><span class="n">typename</span> <span class="no">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">threadsafe_stack</span>
+<span class="p">{</span>
+<span class="nl">private:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">data</span><span class="p">;</span>
+    <span class="n">mutable</span> <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">m</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="n">threadsafe_stack</span><span class="p">(){}</span>
+    <span class="n">threadsafe_stack</span><span class="p">(</span><span class="k">const</span> <span class="n">threadsafe_stack</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">threadsafe_stack</span><span class="o">&amp;</span> <span class="n">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">threadsafe_stack</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="n">delete</span><span class="p">;</span>
+
+    <span class="k">void</span> <span class="n">push</span><span class="p">(</span><span class="no">T</span> <span class="n">new_value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">data</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">new_value</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">pop</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="n">throw</span> <span class="n">empty_stack</span><span class="p">();</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="k">const</span> <span class="n">res</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">top</span><span class="p">()));</span>
+        <span class="n">data</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">void</span> <span class="n">pop</span><span class="p">(</span><span class="no">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="n">throw</span> <span class="n">empty_stack</span><span class="p">();</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">data</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">bool</span> <span class="n">empty</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">threadsafe_stack</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span> <span class="n">si</span><span class="p">;</span>
+    <span class="n">si</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="mh">5</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="k">int</span><span class="o">&gt;</span> <span class="n">first</span><span class="o">=</span><span class="n">si</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="n">first</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">try</span> <span class="p">{</span>
+        <span class="k">int</span> <span class="n">x</span><span class="p">;</span>
+        <span class="n">si</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">empty_stack</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+
+
+<h3>死锁</h3>
+<p>避免死锁的方法：</p>
+<ul>
+<li>
+<blockquote>
+<p>如果拥有了一个锁，就尽量不要再请求另外一个锁</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>调用用户的程序时，不要使用锁，你不知道用户的程序是否包含锁</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>以一定的顺序调用锁，比如使用lock和lock_guard的结合</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>使用hierarchy锁，只在运行时才可以检测</p>
+</blockquote>
+</li>
+</ul>
+<div class="highlight"><pre><span class="c1">//</span>
+<span class="c1">//  hierarchy_lock.cpp</span>
+<span class="c1">//  cpp_concurrency</span>
+<span class="c1">//</span>
+<span class="c1">//  Created by jack on 14-8-31.</span>
+<span class="c1">//  Copyright (c) 2014年 jack. All rights reserved.</span>
+<span class="c1">//</span>
+
+
+<span class="cm">/**</span>
+<span class="cm"> *  hierarchical的不足就是，在运行时才可以检测</span>
+<span class="cm"> */</span>
+
+<span class="p">#</span><span class="k">include</span> <span class="s">&quot;hierarchy_lock.h&quot;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">mutex</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">stdexcept</span><span class="o">&gt;</span>
+<span class="p">#</span><span class="k">include</span> <span class="o">&lt;</span><span class="n">thread</span><span class="o">&gt;</span>
+
+
+<span class="k">class</span> <span class="n">hierarchical_mutex</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">internal_mutex</span><span class="p">;</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="k">const</span> <span class="n">hierarchy_value</span><span class="p">;</span>
+    <span class="k">unsigned</span> <span class="n">long</span> <span class="n">previous_hierarchy_value</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">_Thread_local</span> <span class="k">unsigned</span> <span class="n">long</span> <span class="n">this_thread_hierarchy_value</span><span class="p">;</span>
+
+    <span class="k">void</span> <span class="n">check_for_hierarchy_violation</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">this_thread_hierarchy_value</span> <span class="o">&lt;=</span> <span class="n">hierarchy_value</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">logic_error</span><span class="p">(</span><span class="s">&quot;mutex hierarchy violated&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">void</span> <span class="n">update_hierarchy_value</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">previous_hierarchy_value</span><span class="o">=</span><span class="n">this_thread_hierarchy_value</span><span class="p">;</span>
+        <span class="n">this_thread_hierarchy_value</span><span class="o">=</span><span class="n">hierarchy_value</span><span class="p">;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;thread hierarchy value: &quot;</span><span class="o">&lt;&lt;</span><span class="n">this_thread_hierarchy_value</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="nl">public:</span>
+    <span class="n">explicit</span> <span class="n">hierarchical_mutex</span><span class="p">(</span><span class="k">unsigned</span> <span class="n">long</span> <span class="n">value</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">hierarchy_value</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
+    <span class="n">previous_hierarchy_value</span><span class="p">(</span><span class="mh">0</span><span class="p">)</span>
+    <span class="p">{}</span>
+    <span class="k">void</span> <span class="n">lock</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//不需要catch，这样死锁就直接退出，这儿只是为了提示错误</span>
+        <span class="n">try</span><span class="p">{</span>
+            <span class="n">check_for_hierarchy_violation</span><span class="p">();</span>
+        <span class="p">}</span><span class="n">catch</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">logic_error</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">internal_mutex</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+        <span class="n">update_hierarchy_value</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">void</span> <span class="n">unlock</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">this_thread_hierarchy_value</span><span class="o">=</span><span class="n">previous_hierarchy_value</span><span class="p">;</span>
+        <span class="n">internal_mutex</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">bool</span> <span class="n">try_lock</span><span class="p">()</span>
+    <span class="p">{</span>
+
+        <span class="n">check_for_hierarchy_violation</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">internal_mutex</span><span class="p">.</span><span class="n">try_lock</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">false</span><span class="p">;</span>
+        <span class="n">update_hierarchy_value</span><span class="p">();</span>
+        <span class="k">return</span> <span class="n">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="n">_Thread_local</span> <span class="k">unsigned</span> <span class="n">long</span>
+<span class="n">hierarchical_mutex</span><span class="o">::</span><span class="n">this_thread_hierarchy_value</span><span class="p">(</span><span class="no">ULONG_MAX</span><span class="p">);</span>
+
+<span class="n">hierarchical_mutex</span> <span class="n">high_level_mutex</span><span class="p">(</span><span class="mh">10000</span><span class="p">);</span>
+<span class="n">hierarchical_mutex</span> <span class="n">low_level_mutex</span><span class="p">(</span><span class="mh">5000</span><span class="p">);</span>
+
+<span class="n">hierarchical_mutex</span> <span class="n">other_mutex</span><span class="p">(</span><span class="mh">100</span><span class="p">);</span>
+
+<span class="k">int</span> <span class="n">do_low_level_stuff</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="mh">42</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="k">int</span> <span class="n">low_level_func</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">hierarchical_mutex</span><span class="o">&gt;</span> <span class="n">lk</span><span class="p">(</span><span class="n">low_level_mutex</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">do_low_level_stuff</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">void</span> <span class="n">high_level_stuff</span><span class="p">(</span><span class="k">int</span> <span class="n">some_param</span><span class="p">)</span>
+<span class="p">{}</span>
+
+
+<span class="k">void</span> <span class="n">high_level_func</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">hierarchical_mutex</span><span class="o">&gt;</span> <span class="n">lk</span><span class="p">(</span><span class="n">high_level_mutex</span><span class="p">);</span>
+    <span class="n">high_level_stuff</span><span class="p">(</span><span class="n">low_level_func</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="k">void</span> <span class="n">thread_a</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">high_level_func</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">void</span> <span class="n">do_other_stuff</span><span class="p">()</span>
+<span class="p">{}</span>
+
+
+<span class="k">void</span> <span class="n">other_stuff</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">high_level_func</span><span class="p">();</span>
+    <span class="n">do_other_stuff</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">void</span> <span class="n">thread_b</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">hierarchical_mutex</span><span class="o">&gt;</span> <span class="n">lk</span><span class="p">(</span><span class="n">other_mutex</span><span class="p">);</span>
+    <span class="n">other_stuff</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">thread</span> <span class="n">a</span><span class="p">(</span><span class="n">thread_a</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span> <span class="p">{</span>
+          <span class="n">a</span><span class="p">.</span><span class="k">join</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">thread</span> <span class="n">b</span><span class="p">(</span><span class="n">thread_b</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">b</span><span class="p">.</span><span class="k">join</span><span class="p">();</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+		<h2>Comments !</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			   var disqus_identifier = "c-concurrency-in-action-4.html";
+			   (function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://jackblog.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || 
+				 document.getElementsByTagName('body')[0]).appendChild(dsq);
+			  })();
+			</script>
+		</div>
+	</article>
+</section>
+        </div><!--/span-->
+      
+		<div class="span3 well sidebar-nav" id="sidebar">
+<ul class="nav nav-list">
+<li class="nav-header"><h4><i class="icon-external-link"></i>blogroll</h4></li>
+    <li><i class="icon-external-link"></i><a href="http://log.dofine.me/">dofine</a></li>
+    <li><i class="icon-external-link"></i><a href="http://www.cnblogs.com/jacksu-tencent/">cnblog</a></li>
+<li class="nav-header"><h4><i class="icon-home icon-large"></i> social</h4></li>
+<li><a href="./" rel="alternate"><i class="icon-bookmark icon-large"></i>atom feed</a></li>
+<li><a href="./feeds/all.rss.xml" rel="alternate"><i class="icon-bookmark icon-large"></i>rss feed</a></li>
+    <li><a href="https://github.com/jacksu"><i class="icon-github-sign icon-large"></i>github</a></li>
+
+<li class="nav-header"><h4><i class="icon-folder-close icon-large"></i>Categories</h4></li>
+<li>
+<a href="./category/bigdata.html">
+    <i class="icon-folder-open icon-large"></i>bigdata
+</a>
+</li>
+<li>
+<a href="./category/envconfig.html">
+    <i class="icon-folder-open icon-large"></i>envconfig
+</a>
+</li>
+<li>
+<a href="./category/system.html">
+    <i class="icon-folder-open icon-large"></i>system
+</a>
+</li>
+
+<li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
+<li class="tag-4">
+    <a href="./tag/distribute system.html">
+        <i class="icon-tag icon-large"></i>distribute system
+    </a>
+</li>
+<li class="tag-4">
+    <a href="./tag/linux.html">
+        <i class="icon-tag icon-large"></i>linux
+    </a>
+</li>
+<li class="tag-4">
+    <a href="./tag/github.html">
+        <i class="icon-tag icon-large"></i>github
+    </a>
+</li>
+<li class="tag-1">
+    <a href="./tag/C++.html">
+        <i class="icon-tag icon-large"></i>C++
+    </a>
+</li>
+
+
+    
+<br>
+<Script Language="JavaScript"> 
+var timedate= new Date("June 22,2013"); 
+var now = new ate(); 
+var date = now.getTime() - timedate.getTime(); 
+var time = Math.floor(date / (1000 * 60 * 60 * 24)); 
+if (time >= 0) ;
+document.write("<p style='text-align: center'><strong><font style='color:black;font-size:36px;'>"+time +"</font></strong> days<br/><strong>since GRADUATION from<br/> Shanghai Jiao Tong University</strong></p>");
+</Script>
+
+<br>
+<a href="http://www.ubuntu.com/"><img src="http://www.ubuntu.com/countdown/banner1.png" border="0" width="180" height="150" alt="The next version of Ubuntu is coming soon"></a><br/>
+
+<br>
+<a href="http://read.douban.com/ebook/4460022/?referral_code=9ztqcla6"><img border="0" alt="大集市与教堂" src="http://img3.douban.com/view/ark_article_cover/retina/public/4460022.jpg?v=1403842265.0/"/></a><br>
+
+<br>
+<li class="widget-container widget_text">
+<h3 class="widget-title">About me</h3>
+<div class="textwidget">
+毕业于西安电子科技大学，现在就职于tencent，关注大数据技术。<br/>
+</div></li>
+
+<br>
+<li class="widget-container widget_text">
+<h3 class="widget-title">推荐文章</h3>
+<div class="textwidget">
+<a href="http://x-wei.github.com/google_youku_host_20120706.html">[更新]访问google服务和优酷去广告功能的host列表</a><br>
+<a href="https://jacksu.github.io/my-github-blog-set.html">用pelican在github上创建自己的博客!</a><br>
+<a href="https://jacksu.github.io/i-love-you.html">我们的故事</a><br>
+</div></li>
+
+<br>
+<li class="widget-container widget_text">
+<h3 class="widget-title">Who are Visiting</h3>
+<div class="textwidget">
+<script type="text/javascript" src="http://jf.revolvermaps.com/2/1.js?i=59olkba9w7e&amp;s=220&amp;m=3&amp;v=false&amp;r=false&amp;b=000000&amp;n=false&amp;c=ff0000" async="async"></script>
+</div></li>
+<!-- UJian Button BEGIN -->
+<script type="text/javascript" src="http://v1.ujian.cc/code/ujian.js?type=slide&fade=1"></script>
+<a href="http://www.ujian.cc" style="border:0;"><img src="http://img.ujian.cc/pixel.png" alt="友荐云推荐" style="border:0;padding:0;margin:0;" /></a>
+<!-- UJian Button END -->
+
+</ul>        </div><!--/.well -->
+
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <address id="about">
+                Proudly powered by <a href="http://pelican.notmyidea.org/">Pelican <i class="icon-external-link"></i></a>,
+				which takes great advantage of <a href="http://python.org">Python <i class="icon-external-link"></i></a>.
+        </address><!-- /#about -->
+
+        <p>The theme is from <a href="http://twitter.github.com/bootstrap/">Bootstrap from Twitter <i class="icon-external-link"></i></a>, 
+		   and <a href="http://fortawesome.github.com/Font-Awesome/">Font-Awesome <i class="icon-external-link"></i></a>, thanks!</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+	var pageTracker = _gat._getTracker("UA-53239362-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+<script type="text/javascript">
+    var disqus_shortname = 'jackblog';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+    
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./theme/js/jquery.js"></script>
+    <script src="./theme/js/bootstrap-transition.js"></script>
+    <script src="./theme/js/bootstrap-alert.js"></script>
+    <script src="./theme/js/bootstrap-modal.js"></script>
+    <script src="./theme/js/bootstrap-dropdown.js"></script>
+    <script src="./theme/js/bootstrap-scrollspy.js"></script>
+    <script src="./theme/js/bootstrap-tab.js"></script>
+    <script src="./theme/js/bootstrap-tooltip.js"></script>
+    <script src="./theme/js/bootstrap-popover.js"></script>
+    <script src="./theme/js/bootstrap-button.js"></script>
+    <script src="./theme/js/bootstrap-collapse.js"></script>
+    <script src="./theme/js/bootstrap-carousel.js"></script>
+    <script src="./theme/js/bootstrap-typeahead.js"></script>
+	
+	<!--<script src="./theme/js/autosidebar.js"></script>-->
+  </body>
+</html>
