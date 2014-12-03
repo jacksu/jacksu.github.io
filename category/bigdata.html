@@ -114,6 +114,41 @@
         <div class="span9" id="content">
         
 	<div class='article'>
+		<h1><a href="../hive-optimization.html">Hive整体优化策略</a></h1>
+		<div class="well small"><footer class="post-info">
+<span class="label">Date</span>
+<abbr class="published" title="2014-12-03T00:20:00">
+	<i class="icon-calendar"></i>三 03 十二月 2014
+</abbr>
+<span class="label">By</span>
+<a href="../author/jacksu.html"><i class="icon-user"></i>jacksu</a>
+<span class="label">Category</span>
+<a href="../category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
+
+	
+<span class="label">Tags</span> 
+	<a href="../tag/hive.html"><i class="icon-tag"></i>hive</a>
+</footer><!-- /.post-info --></div>
+		<div class="summary"><h1>一 整体架构优化</h1>
+<p>现在hive的整体框架如下，计算引擎不仅仅支持Map/Reduce，并且还支持Tez、Spark等。根据不同的计算引擎又可以使用不同的资源调度和存储系统。</p>
+<p><img alt="hive_frame" src=".http://jacksu.github.io/static/bigdata/hive_frame" /></p>
+<p>整体架构优化点：
+1 根据不同业务需求进行日期分区，并执行类型动态分区。
+相关参数设置：
+0.14中默认hive.exec.dynamic.partition=ture
+2 为了减少磁盘存储空间以及I/O次数，对数据进行压缩
+相关参数设置：
+job输出文件按照BLOCK以Gzip方式进行压缩。
+mapreduce.output.fileoutputformat.compress=true
+mapreduce.output.fileoutputformat.compress.type=BLOCK
+mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec
+map输出结果也以Gzip进行压缩。
+mapreduce.map ...</p> 
+			<a class="btn primary xsmall" href="../hive-optimization.html">more ...</a>
+		</div>
+	</div>	
+	<hr />
+	<div class='article'>
 		<h1><a href="../c-concurrency-in-action-4.html">C++并行编程4</a></h1>
 		<div class="well small"><footer class="post-info">
 <span class="label">Date</span>
@@ -250,6 +285,16 @@
 
 <li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
 <li class="tag-4">
+    <a href="../tag/distribute system.html">
+        <i class="icon-tag icon-large"></i>distribute system
+    </a>
+</li>
+<li class="tag-4">
+    <a href="../tag/hive.html">
+        <i class="icon-tag icon-large"></i>hive
+    </a>
+</li>
+<li class="tag-4">
     <a href="../tag/github.html">
         <i class="icon-tag icon-large"></i>github
     </a>
@@ -257,11 +302,6 @@
 <li class="tag-4">
     <a href="../tag/linux.html">
         <i class="icon-tag icon-large"></i>linux
-    </a>
-</li>
-<li class="tag-4">
-    <a href="../tag/distribute system.html">
-        <i class="icon-tag icon-large"></i>distribute system
     </a>
 </li>
 <li class="tag-1">

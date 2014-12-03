@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jack's Blog</title>
+    <title>Hive整体优化策略</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -82,7 +82,7 @@
           <div class="nav-collapse">
             <ul class="nav">
 			  <li class="divider-vertical"></li>
-                  <li >
+                  <li class="active">
                     <a href="./category/bigdata.html">
 						<i class="icon-folder-open icon-large"></i>bigdata
 					</a>
@@ -112,10 +112,21 @@
     <div class="container-fluid">
       <div class="row">
         <div class="span9" id="content">
-        
-	<div class='article'>
-		<h1><a href="./hive-optimization.html">Hive整体优化策略</a></h1>
-		<div class="well small"><footer class="post-info">
+<section id="content">    
+	<article>
+		<header>
+			<h1>
+				<a href=""
+					rel="bookmark" 
+					title="Permalink to Hive整体优化策略">
+					Hive整体优化策略 
+				</a>
+ 
+			</h1> 
+		</header>
+		<div class="entry-content">
+		<div class="well">
+<footer class="post-info">
 <span class="label">Date</span>
 <abbr class="published" title="2014-12-03T00:20:00">
 	<i class="icon-calendar"></i>三 03 十二月 2014
@@ -128,8 +139,8 @@
 	
 <span class="label">Tags</span> 
 	<a href="./tag/hive.html"><i class="icon-tag"></i>hive</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><h1>一 整体架构优化</h1>
+</footer><!-- /.post-info -->		</div>
+		<h1>一 整体架构优化</h1>
 <p>现在hive的整体框架如下，计算引擎不仅仅支持Map/Reduce，并且还支持Tez、Spark等。根据不同的计算引擎又可以使用不同的资源调度和存储系统。</p>
 <p><img alt="hive_frame" src=".http://jacksu.github.io/static/bigdata/hive_frame" /></p>
 <p>整体架构优化点：
@@ -143,159 +154,95 @@ mapreduce.output.fileoutputformat.compress=true
 mapreduce.output.fileoutputformat.compress.type=BLOCK
 mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec
 map输出结果也以Gzip进行压缩。
-mapreduce.map ...</p> 
-			<a class="btn primary xsmall" href="./hive-optimization.html">more ...</a>
+mapreduce.map.output.compress=true
+mapreduce.map.output.compress.codec=org.apache.hadoop.io.compress.GzipCodec
+对hive输出结果和中间结果进行压缩。
+hive.exec.compress.output=true
+hive.exec.compress.intermediate=true
+3 hive中间表以SequenceFile保存，可以节约序列化和反序列化的时间
+相关参数设置：
+hive.query.result.fileformat=SequenceFile
+4 yarn优化，在此不再展开，后面专门介绍。</p>
+<h1>二 MR阶段优化</h1>
+<p>hive操作符有：</p>
+<p><img alt="hive_oper" src=".http://jacksu.github.io/static/bigdata/hive_oper" /></p>
+<p>执行流程为：</p>
+<p><img alt="hive_oper_flow" src=".http://jacksu.github.io/static/bigdata/hive_oper_flow" /></p>
+<p>reduce切割算法：
+相关参数设置，默认为：
+hive.exec.reducers.max=999
+hive.exec.reducers.bytes.per.reducer=1G 
+reduce task num=min{reducers.max,input.size/bytes.per.reducer}，可以根据实际需求来调整reduce的个数。</p>
+<h1>三 JOB优化</h1>
+<h2>1 本地执行</h2>
+<p>默认关闭了本地执行模式，小数据可以使用本地执行模式，加快执行速度。
+相关参数设置：
+hive.exec.mode.local.auto=true 
+默认本地执行的条件是，hive.exec.mode.local.auto.inputbytes.max=128MB， hive.exec.mode.local.auto.tasks.max=4，reduce task最多1个。
+性能测试：</p>
+<table>
+<thead>
+<tr>
+<th align="center">数据量（万）</th>
+<th align="center">操作</th>
+<th align="center">正常执行时间（秒)</th>
+<th align="center">本地执行时间（秒）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">170</td>
+<td align="center">group by</td>
+<td align="center">36</td>
+<td align="center">16</td>
+</tr>
+<tr>
+<td align="center">80</td>
+<td align="center">count</td>
+<td align="center">34</td>
+<td align="center">6</td>
+</tr>
+</tbody>
+</table>
+<h2>2 mapjoin</h2>
+<p>默认mapjoin是打开的，
+hive.auto.convert.join.noconditionaltask.size=10MB</p>
+<p>装载到内存的表必须是通过scan的表（不包括group by等操作），如果join的两个表都满足上面的条件，/*mapjoin*/指定表格不起作用，只会装载小表到内存，否则就会选那个满足条件的scan表。</p>
+<h1>四 SQL优化</h1>
+<p>整体的优化策略如下：</p>
+<ol>
+<li>去除查询中不需要的column</li>
+<li>Where条件判断等在TableScan阶段就进行过滤</li>
+<li>利用Partition信息，只读取符合条件的Partition</li>
+<li>Map端join，以大表作驱动，小表载入所有mapper内存中</li>
+<li>调整Join顺序，确保以大表作为驱动表</li>
+<li>对于数据分布不均衡的表Group by时，为避免数据集中到少数的reducer上，分成两个map-reduce阶段。第一个阶段先用Distinct列进行shuffle，然后在reduce端部分聚合，减小数据规模，第二个map-reduce阶段再按group-by列聚合。</li>
+<li>在map端用hash进行部分聚合，减小reduce端数据处理规模。</li>
+</ol>
+<h1>五 平台优化</h1>
+<p>1hive on tez</p>
+<p><img alt="hive_on_tez" src=".http://jacksu.github.io/static/bigdata/hive_on_tez" /></p>
+<p>2 spark SQL大趋势</p>
+<p><img alt="spark_sql" src=".http://jacksu.github.io/static/bigdata/spark_sql" /></p>
+<h1>总结</h1>
+<p>上面主要介绍一些优化思想，有些优化点没有详细展开，后面分别介绍yarn的优化细节、SQL详细的优化实例以及我们在Tez、spark等框架优化结果。最后用一句话共勉：边coding，边优化，优化无止境。</p>
+		</div><!-- /.entry-content -->
+		<div class="comments">
+		<h2>Comments !</h2>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			   var disqus_identifier = "hive-optimization.html";
+			   (function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; dsq.async = true;
+				dsq.src = 'http://jackblog.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || 
+				 document.getElementsByTagName('body')[0]).appendChild(dsq);
+			  })();
+			</script>
 		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./c-concurrency-in-action-4.html">C++并行编程4</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-08-25T23:20:00">
-	<i class="icon-calendar"></i>一 25 八月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>基于C++11，并行线程编程的最大好处，就是可以数据共享，但最大的坏处也是数据共享，如果使用不当，最容易产生bug。本节介绍如何安全的共享数据，避免潜在的问题。</p> 
-			<a class="btn primary xsmall" href="./c-concurrency-in-action-4.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./c-concurrency-in-action-3.html">C++并行编程3</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-08-24T09:20:00">
-	<i class="icon-calendar"></i>日 24 八月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>基于C++11，介绍std::thread是如何传递参数的，是如何转换所有权的，以及如何确定线程数和获得线程标识符。</p> 
-			<a class="btn primary xsmall" href="./c-concurrency-in-action-3.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./c-concurrency-in-action-2.html">C++并行编程2</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-08-23T23:20:00">
-	<i class="icon-calendar"></i>六 23 八月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>基于C++11线程的基本管理，包括如何启动一个线程，如何等待一个线程结束，如何处理一个异常以及如何让一个线程后台运行。</p> 
-			<a class="btn primary xsmall" href="./c-concurrency-in-action-2.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./c-concurrency-in-action-1.html">C++并行编程1</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-08-19T00:20:00">
-	<i class="icon-calendar"></i>二 19 八月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/c.html"><i class="icon-tag"></i>C++</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>在C++11中的标准库中引入了线程库，这样就可以方便我们并行编程。什么时候需要并行编程呢？什么时候又不需要呢？并用线程库实现hello world。</p> 
-			<a class="btn primary xsmall" href="./c-concurrency-in-action-1.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./distribute-system-terms.html">分布式系统－terms</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-08-13T11:20:00">
-	<i class="icon-calendar"></i>三 13 八月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/bigdata.html"><i class="icon-folder-open"></i>bigdata</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/distribute-system.html"><i class="icon-tag"></i>distribute system</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>好玩实在的分布式系统理论系列，本节主要介绍分布式系统中涉及到的一些术语，大家应该经常听到这些术语的，但是具体含义应该没有多少人可以确切回答的，如scalability、latency、performance等。</p> 
-			<a class="btn primary xsmall" href="./distribute-system-terms.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./linux-kernel-introduce.html">Linux内核策略介绍学习笔记</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-07-28T20:20:00">
-	<i class="icon-calendar"></i>一 28 七月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/system.html"><i class="icon-folder-open"></i>system</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/linux.html"><i class="icon-tag"></i>linux</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>在上周听了mike的关于linux内核策略的分享，这可是一个长达四个小时的分享，其中一句话印象非常深刻就是，“好的系统性能不是压测出来的，是设计出来的”。内容主要通过后台服务依赖的硬件资源（CPU、内存、外存、网络、其他）主线来介绍的。</p> 
-			<a class="btn primary xsmall" href="./linux-kernel-introduce.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-	<div class='article'>
-		<h1><a href="./my-github-blog-set.html">个人github blog环境设置</a></h1>
-		<div class="well small"><footer class="post-info">
-<span class="label">Date</span>
-<abbr class="published" title="2014-07-27T00:20:00">
-	<i class="icon-calendar"></i>日 27 七月 2014
-</abbr>
-<span class="label">By</span>
-<a href="./author/jacksu.html"><i class="icon-user"></i>jacksu</a>
-<span class="label">Category</span>
-<a href="./category/envconfig.html"><i class="icon-folder-open"></i>envconfig</a>. 
-
-	
-<span class="label">Tags</span> 
-	<a href="./tag/github.html"><i class="icon-tag"></i>github</a>
-</footer><!-- /.post-info --></div>
-		<div class="summary"><p>每个人都想拥有自己的网站，但是大部分比较屌丝，不想花钱租赁服务器，哈哈，屌丝有屌丝办法。github应该都听说过吧，github.io提供了此功能，而且使用github来管理自己的代码，如果你有域名，还可以绑定你自己的域名欧。我在github的博客（<strong><a href="http://jacksu.github.io">jacksu blog</a></strong>）终于捣鼓好了，也给大家介绍一下建站步骤。</p> 
-			<a class="btn primary xsmall" href="./my-github-blog-set.html">more ...</a>
-		</div>
-	</div>	
-	<hr />
-
+	</article>
+</section>
         </div><!--/span-->
       
 		<div class="span3 well sidebar-nav" id="sidebar">
