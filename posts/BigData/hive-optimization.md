@@ -5,7 +5,7 @@ Category: bigdata
 Tags: hive
 Slug: hive-optimization
 Author: jacksu
-ummary:hive可以从几个方面进行优化，从系统角度看：整体架构、MR阶段、JOB以及平台都可以进行优化。从用户角度看:了解SQL执行过程以及业务数据特点，调整SQL语句进行优化。
+summary:hive可以从几个方面进行优化，从系统角度看：整体架构、MR阶段、JOB以及平台都可以进行优化。从用户角度看:了解SQL执行过程以及业务数据特点，调整SQL语句进行优化。
 
 #一 整体架构优化
 现在hive的整体框架如下，计算引擎不仅仅支持Map/Reduce，并且还支持Tez、Spark等。根据不同的计算引擎又可以使用不同的资源调度和存储系统。
