@@ -1,43 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>jack's Blog</title><link>/</link><description></description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 03 Dec 2014 00:20:00 +0800</lastBuildDate><item><title>Hive整体优化策略</title><link>/hive-optimization.html</link><description>&lt;h1&gt;一 整体架构优化&lt;/h1&gt;
 &lt;p&gt;现在hive的整体框架如下，计算引擎不仅仅支持Map/Reduce，并且还支持Tez、Spark等。根据不同的计算引擎又可以使用不同的资源调度和存储系统。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="hive_frame" src=".http://jacksu.github.io/static/bigdata/hive_frame" /&gt;&lt;/p&gt;
-&lt;p&gt;整体架构优化点：
-1 根据不同业务需求进行日期分区，并执行类型动态分区。
-相关参数设置：
-0.14中默认hive.exec.dynamic.partition=ture
-2 为了减少磁盘存储空间以及I/O次数，对数据进行压缩
-相关参数设置：
-job输出文件按照BLOCK以Gzip方式进行压缩。
-mapreduce.output.fileoutputformat.compress=true
-mapreduce.output.fileoutputformat.compress.type=BLOCK
-mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec
-map输出结果也以Gzip进行压缩。
-mapreduce.map.output.compress=true
-mapreduce.map.output.compress.codec=org.apache.hadoop.io.compress.GzipCodec
-对hive输出结果和中间结果进行压缩。
-hive.exec.compress.output=true
-hive.exec.compress.intermediate=true
-3 hive中间表以SequenceFile保存，可以节约序列化和反序列化的时间
-相关参数设置：
-hive.query.result.fileformat=SequenceFile
-4 yarn优化，在此不再展开，后面专门介绍。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hive_frame" src="http://jacksu.github.io/static/bigdata/hive_frame" /&gt;&lt;/p&gt;
+&lt;p&gt;整体架构优化点：&lt;/p&gt;
+&lt;p&gt;1 根据不同业务需求进行日期分区，并执行类型动态分区。&lt;/p&gt;
+&lt;p&gt;相关参数设置：&lt;/p&gt;
+&lt;p&gt;0.14中默认hive.exec.dynamic.partition=ture&lt;/p&gt;
+&lt;p&gt;2 为了减少磁盘存储空间以及I/O次数，对数据进行压缩&lt;/p&gt;
+&lt;p&gt;相关参数设置：&lt;/p&gt;
+&lt;p&gt;job输出文件按照BLOCK以Gzip方式进行压缩。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;mapreduce&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fileoutputformat&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="n"&gt;mapreduce&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fileoutputformat&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;BLOCK&lt;/span&gt;
+&lt;span class="n"&gt;mapreduce&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fileoutputformat&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;codec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apache&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hadoop&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GzipCodec&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;map输出结果也以Gzip进行压缩。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;mapreduce&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="n"&gt;mapreduce&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;codec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apache&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hadoop&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;GzipCodec&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;对hive输出结果和中间结果进行压缩。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exec&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exec&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compress&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;intermediate&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;3 hive中间表以SequenceFile保存，可以节约序列化和反序列化的时间&lt;/p&gt;
+&lt;p&gt;相关参数设置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fileformat&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;SequenceFile&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;4 yarn优化，在此不再展开，后面专门介绍。&lt;/p&gt;
 &lt;h1&gt;二 MR阶段优化&lt;/h1&gt;
 &lt;p&gt;hive操作符有：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="hive_oper" src=".http://jacksu.github.io/static/bigdata/hive_oper" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hive_oper" src="http://jacksu.github.io/static/bigdata/hive_oper" /&gt;&lt;/p&gt;
 &lt;p&gt;执行流程为：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="hive_oper_flow" src=".http://jacksu.github.io/static/bigdata/hive_oper_flow" /&gt;&lt;/p&gt;
-&lt;p&gt;reduce切割算法：
-相关参数设置，默认为：
-hive.exec.reducers.max=999
-hive.exec.reducers.bytes.per.reducer=1G 
-reduce task num=min{reducers.max,input.size/bytes.per.reducer}，可以根据实际需求来调整reduce的个数。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hive_oper_flow" src="http://jacksu.github.io/static/bigdata/hive_oper_flow" /&gt;&lt;/p&gt;
+&lt;p&gt;reduce切割算法：&lt;/p&gt;
+&lt;p&gt;相关参数设置，默认为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exec&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reducers&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;999&lt;/span&gt;
+&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exec&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reducers&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bytes&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;per&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reducer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="n"&gt;G&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;reduce task num=min{reducers.max,input.size/bytes.per.reducer}，可以根据实际需求来调整reduce的个数。&lt;/p&gt;
 &lt;h1&gt;三 JOB优化&lt;/h1&gt;
 &lt;h2&gt;1 本地执行&lt;/h2&gt;
-&lt;p&gt;默认关闭了本地执行模式，小数据可以使用本地执行模式，加快执行速度。
-相关参数设置：
-hive.exec.mode.local.auto=true 
-默认本地执行的条件是，hive.exec.mode.local.auto.inputbytes.max=128MB， hive.exec.mode.local.auto.tasks.max=4，reduce task最多1个。
+&lt;p&gt;默认关闭了本地执行模式，小数据可以使用本地执行模式，加快执行速度。&lt;/p&gt;
+&lt;p&gt;相关参数设置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;hive&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exec&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mode&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;local&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;默认本地执行的条件是，hive.exec.mode.local.auto.inputbytes.max=128MB， hive.exec.mode.local.auto.tasks.max=4，reduce task最多1个。
 性能测试：&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -80,9 +98,9 @@ hive.auto.convert.join.noconditionaltask.size=10MB&lt;/p&gt;
 &lt;/ol&gt;
 &lt;h1&gt;五 平台优化&lt;/h1&gt;
 &lt;p&gt;1hive on tez&lt;/p&gt;
-&lt;p&gt;&lt;img alt="hive_on_tez" src=".http://jacksu.github.io/static/bigdata/hive_on_tez" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hive_on_tez" src="http://jacksu.github.io/static/bigdata/hive_on_tez" /&gt;&lt;/p&gt;
 &lt;p&gt;2 spark SQL大趋势&lt;/p&gt;
-&lt;p&gt;&lt;img alt="spark_sql" src=".http://jacksu.github.io/static/bigdata/spark_sql" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="spark_sql" src="http://jacksu.github.io/static/bigdata/spark_sql" /&gt;&lt;/p&gt;
 &lt;h1&gt;总结&lt;/h1&gt;
 &lt;p&gt;上面主要介绍一些优化思想，有些优化点没有详细展开，后面分别介绍yarn的优化细节、SQL详细的优化实例以及我们在Tez、spark等框架优化结果。最后用一句话共勉：边coding，边优化，优化无止境。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jacksu</dc:creator><pubDate>Wed, 03 Dec 2014 00:20:00 +0800</pubDate><guid>tag:,2014-12-03:hive-optimization.html</guid><category>hive</category></item><item><title>C++并行编程4</title><link>/c-concurrency-in-action-4.html</link><description>&lt;h2&gt;共享数据的问题&lt;/h2&gt;
 &lt;p&gt;所有问题都是由&lt;em&gt;共享数据更新&lt;/em&gt;导致的，如果数据是只读的话，一个线程的读取，是不会影响其他线程的读取的。&lt;/p&gt;
