@@ -116,9 +116,12 @@ I'd like to eat my own dog food!
 scala中没有静态方法和属性，全部由singleton object（单例对象）来替代
 
 ##参考文献
-http://zh.scala-tour.com/#/welcome
-http://twitter.github.io/scala_school/zh_cn/index.html
+[scala 动态演示](http://zh.scala-tour.com/#/welcome)
+
+[scala of twitter](http://twitter.github.io/scala_school/zh_cn/index.html)
+
 [first step to scala](http://www.artima.com/scalazine/articles/steps.html)
+
 [A Tour of Scala](http://www.scala-lang.org/old/node/104.html)
 
 ##广告
