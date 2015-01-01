@@ -1,5 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="/" rel="alternate"></link><link href="/feeds/bigdata.atom.xml" rel="self"></link><id>/</id><updated>2014-12-03T00:20:00+08:00</updated><entry><title>Hive整体优化策略</title><link href="/hive-optimization.html" rel="alternate"></link><updated>2014-12-03T00:20:00+08:00</updated><author><name>jacksu</name></author><id>tag:,2014-12-03:hive-optimization.html</id><summary type="html">&lt;h1&gt;一 整体架构优化&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jack's Blog</title><link href="/" rel="alternate"></link><link href="/feeds/bigdata.atom.xml" rel="self"></link><id>/</id><updated>2015-01-01T11:20:00+08:00</updated><entry><title>Scala快速入门－基础</title><link href="/scala-base.html" rel="alternate"></link><updated>2015-01-01T11:20:00+08:00</updated><author><name>jacksu</name></author><id>tag:,2015-01-01:scala-base.html</id><summary type="html">&lt;h2&gt;HelloWorld&lt;/h2&gt;
+&lt;p&gt;从HelloWorld开始，使用scala IDE编辑器。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;新建scala project&lt;/li&gt;
+&lt;li&gt;新建scala object&lt;/li&gt;
+&lt;li&gt;编写HelloWorld&lt;/li&gt;
+&lt;li&gt;run as scala application&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;object&lt;/span&gt; &lt;span class="n"&gt;HelloWorld&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+
+  &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Array&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="p"&gt;]){&lt;/span&gt;
+    &lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Hello world&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;表达式和值&lt;/h2&gt;
+&lt;p&gt;scala中，几乎所有的元素都是表达式，以val定义常量，var定义变量&lt;/p&gt;
+&lt;h2&gt;函数&lt;/h2&gt;
+&lt;p&gt;可以使用def来定义一个函数。函数体是一个表达式。
+使用Block表达式的时候，默认最后一行的返回是返回值，如果不是递归函数，无需显式指定。
+函数还可以像值一样，赋值给var或val。因此&lt;strong&gt;函数也可以作为参数传给另一个函数&lt;/strong&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//定义函数，函数参数要指定类型签名&lt;/span&gt;
+&lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nl"&gt;a:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;squareWithBlock&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nl"&gt;a:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;//定义匿名函数，匿名函数由参数列表，箭头连接符和函数体组成&lt;/span&gt;
+&lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="n"&gt;squareVal&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nl"&gt;a:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+
+&lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;addOne&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nl"&gt;f:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nl"&gt;arg:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mh"&gt;1&lt;/span&gt;
+
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;square(2):&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;squareWithBlock(2):&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;squareWithBlock&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;squareVal(2):&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;squareVal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;addOne(squareVal,2):&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;addOne&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;squareVal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mh"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;执行结果：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="n"&gt;squareWithBlock&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="n"&gt;squareVal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="n"&gt;addOne&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;squareVal&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;def log(msg: ＝&amp;gt; String)&lt;/code&gt;按名称传递，参数只有在实际使用时才计算&lt;/p&gt;
+&lt;h2&gt;类&lt;/h2&gt;
+&lt;p&gt;使用&lt;code&gt;class&lt;/code&gt;定义类，使用&lt;code&gt;new&lt;/code&gt;生成类，&lt;strong&gt;构造函数不是特殊的方法，他们是除了类的方法定义之外的代码&lt;/strong&gt;。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;class Calculator(brand: String) {
+  /**
+   * A constructor.
+   */
+  val color: String = if (brand == &amp;quot;TI&amp;quot;) {
+    &amp;quot;blue&amp;quot;
+  } else if (brand == &amp;quot;HP&amp;quot;) {
+    &amp;quot;black&amp;quot;
+  } else {
+    &amp;quot;white&amp;quot;
+  }
+
+  // An instance method.
+  def add(m: Int, n: Int): Int = m + n
+}
+val calc = new Calculator(&amp;quot;HP&amp;quot;)
+calc.color
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;特质（trait）&lt;/h2&gt;
+&lt;p&gt;特质类似于java中interface，但trait则可以定义方法体，通过&lt;code&gt;with&lt;/code&gt;关键字，一个类可以扩展多个特质：
+&lt;code&gt;在scala中重写一个方法是需要指定override关键词的。如果重写一个方法时，没有加上override关键词，那么scala编译会无法通过。&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;trait&lt;/span&gt; &lt;span class="n"&gt;Friendly&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hi&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;class&lt;/span&gt; &lt;span class="n"&gt;Dog&lt;/span&gt; &lt;span class="n"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;Friendly&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;override&lt;/span&gt; &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Woof&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;class&lt;/span&gt; &lt;span class="n"&gt;HungryDog&lt;/span&gt; &lt;span class="n"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;Dog&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;override&lt;/span&gt; &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;I&amp;#39;d like to eat my own dog food&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;trait&lt;/span&gt; &lt;span class="n"&gt;ExclamatoryGreeter&lt;/span&gt; &lt;span class="n"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;Friendly&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;override&lt;/span&gt; &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;super&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;!&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;var&lt;/span&gt; &lt;span class="n"&gt;pet&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Friendly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="n"&gt;Dog&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pet&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+&lt;span class="n"&gt;pet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="n"&gt;HungryDog&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pet&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+&lt;span class="n"&gt;pet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="n"&gt;Dog&lt;/span&gt; &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;ExclamatoryGreeter&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pet&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+&lt;span class="n"&gt;pet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="n"&gt;HungryDog&lt;/span&gt; &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;ExclamatoryGreeter&lt;/span&gt;
+&lt;span class="n"&gt;println&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pet&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;greet&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;result:
+Woof
+I'd like to eat my own dog food
+Woof!
+I'd like to eat my own dog food!&lt;/p&gt;
+&lt;h2&gt;类型&lt;/h2&gt;
+&lt;p&gt;泛型，可以到用&lt;code&gt;方括号&lt;/code&gt;语法引入的类型参数&lt;/p&gt;
+&lt;h2&gt;object&lt;/h2&gt;
+&lt;p&gt;scala中没有静态方法和属性，全部由singleton object（单例对象）来替代&lt;/p&gt;
+&lt;h2&gt;参考文献&lt;/h2&gt;
+&lt;p&gt;http://zh.scala-tour.com/#/welcome
+http://twitter.github.io/scala_school/zh_cn/index.html
+&lt;a href="http://www.artima.com/scalazine/articles/steps.html"&gt;first step to scala&lt;/a&gt;
+&lt;a href="http://www.scala-lang.org/old/node/104.html"&gt;A Tour of Scala&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;广告&lt;/h2&gt;
+&lt;p&gt;点击&lt;a href="http://jq.qq.com/?_wv=1027&amp;amp;k=g2JG15"&gt;Spark&lt;/a&gt;加入群&lt;a href="http://jq.qq.com/?_wv=1027&amp;amp;k=g2JG15"&gt;Spark&lt;/a&gt;，分享更多&lt;a href="http://jq.qq.com/?_wv=1027&amp;amp;k=g2JG15"&gt;Spark&lt;/a&gt;相关信息&lt;/p&gt;</summary><category term="spark"></category></entry><entry><title>Hive整体优化策略</title><link href="/hive-optimization.html" rel="alternate"></link><updated>2014-12-03T00:20:00+08:00</updated><author><name>jacksu</name></author><id>tag:,2014-12-03:hive-optimization.html</id><summary type="html">&lt;h1&gt;一 整体架构优化&lt;/h1&gt;
 &lt;p&gt;现在hive的整体框架如下，计算引擎不仅仅支持Map/Reduce，并且还支持Tez、Spark等。根据不同的计算引擎又可以使用不同的资源调度和存储系统。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="hive_frame" src="http://jacksu.github.io/static/bigdata/hive_frame" /&gt;&lt;/p&gt;
 &lt;p&gt;整体架构优化点：&lt;/p&gt;
