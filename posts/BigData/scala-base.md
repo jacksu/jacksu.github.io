@@ -5,7 +5,7 @@ Category: bigdata
 Tags: spark
 Slug: scala-base
 Author: jacksu
-Summary:好玩实在的分布式系统理论系列，本节主要介绍分布式系统中涉及到的一些术语，大家应该经常听到这些术语的，但是具体含义应该没有多少人可以确切回答的，如scalability、latency、performance等。
+Summary:2014年apache开源软件最火的应该是spark，没有之一。为了更好的掌握spark，scala应该是必须学习的。为了一周左右快速入门scala，对scala有个基本认识，不可能像学校那样拿着书系统学习，只能通过官网tutorial以及高手的总结（后面的参考资料）。现把scala的基本知识总结了一下，分享给大家。
 
 ##HelloWorld
 从HelloWorld开始，使用scala IDE编辑器。
